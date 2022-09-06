@@ -6,6 +6,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -40,6 +41,7 @@ public class PlaydateCtl {
 			@ModelAttribute("playdate") PlaydateMdl playdateMdl // this needed to display create-new on the page
 			, Model model
 			, HttpSession session
+//			, @Param("keyword") Long keyword // new
 			) {
 		
 		// log out the unauth / deliver the auth use data
@@ -47,11 +49,28 @@ public class PlaydateCtl {
 		Long authenticatedUserId = (Long) session.getAttribute("userId");
 		model.addAttribute("authUser", userSrv.findById(authenticatedUserId));
 		
+		// orig return all list
 		List<PlaydateMdl> playdateList = playdateSrv.returnAll();
 		model.addAttribute("playdateList", playdateList);
 
+		// list of items with a fixed query (event name contains 'dino'
+		List<PlaydateMdl> playdateList2 = playdateSrv.filteredReturn();
+		model.addAttribute("playdateList2", playdateList2);
+		
+		// list of items where createdBy_id = loggedInUserId
+		Long keyword = authenticatedUserId; 
+		List<PlaydateMdl> playdateList3 = playdateSrv.returnMyEventList(keyword);
+		model.addAttribute("playdateList3", playdateList3);
+		
+		
+
 		return "playdate/list.jsp";
 	}
+	
+	
+	
+	
+	
 	
 	// display create-new page
 	@GetMapping("/playdate/new")
