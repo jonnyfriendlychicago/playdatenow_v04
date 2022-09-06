@@ -2,7 +2,7 @@ package com.jonfriend.playdatenow_v04.repositories;
 
 import java.util.List;
 
-//import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +13,10 @@ public interface PlaydateRpo extends CrudRepository<PlaydateMdl, Long> {
 	
 	List<PlaydateMdl> findAll();
 	
-//	// approach 1
+	PlaydateMdl findByIdIs(Long id);
+
+	
+	//	// approach 1
 //	// below attempt to use advanced query
 //	@Query("SELECT p.* FROM playdate p")
 //	List<PlaydateMdl> findAllQuery(); 
@@ -30,9 +33,17 @@ public interface PlaydateRpo extends CrudRepository<PlaydateMdl, Long> {
 //	                               Pageable page);
 //	
 //// approach 3
-	          
-	          
-	PlaydateMdl findByIdIs(Long id);
-	
-	
+	 // new, all of below
+	 @Query(
+			 value= "SELECT p.* FROM playdatenow.playdate p WHERE p.event_name LIKE '%dino%'"
+			 , nativeQuery = true)
+//	 List<PlaydateMdl> search(String keyword);
+	 List<PlaydateMdl> search();
+	 
+	 @Query(
+			 value= "SELECT p.* FROM playdatenow.playdate p WHERE p.createdBy_id LIKE :keyword order by p.created_at desc"
+			 , nativeQuery = true)
+	 List<PlaydateMdl> CreatorList(Long keyword);
+//	 List<PlaydateMdl> CreatorList();
+
 }

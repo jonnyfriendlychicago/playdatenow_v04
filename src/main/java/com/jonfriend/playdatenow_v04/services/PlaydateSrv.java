@@ -45,5 +45,29 @@ public class PlaydateSrv {
 		return playdateRpo.findAll();
 	}
 	
+	 // new, all of below
+//	public List<PlaydateMdl> listAll(String keyword) {
+//        if (keyword != null) {
+//            return playdateRpo.search(keyword);
+//        }
+//        return playdateRpo.findAll();
+//    }
+	
+	public List<PlaydateMdl> filteredReturn() {
+		return playdateRpo.search(); 
+	}
+	
+	public List<PlaydateMdl> returnMyEventList(Long x) {
+		return playdateRpo.CreatorList(x); 
+	}
+	
+	
+	public List<PlaydateMdl> returnMyFutureEventList(Long x) {
+		
+		return playdateRpo.CreatorList(x);
+		
+		
+	}
+	
 	
 }
