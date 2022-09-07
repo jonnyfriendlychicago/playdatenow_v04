@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -18,10 +19,12 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import com.jonfriend.playdatenow_v04.models.LoginUserMdl;
+import com.jonfriend.playdatenow_v04.models.PlaydateMdl;
 //import com.jonfriend.playdatenow_v04.models.PlaydateMdl;
 //import com.jonfriend.playdatenow_v04.models.StateterritoryMdl;
 import com.jonfriend.playdatenow_v04.models.UserMdl;
 import com.jonfriend.playdatenow_v04.models.UserupdateMdl;
+import com.jonfriend.playdatenow_v04.services.PlaydateSrv;
 //import com.jonfriend.playdatenow_v04.services.StateterritorySrv;
 import com.jonfriend.playdatenow_v04.services.UserSrv;
 
@@ -30,6 +33,9 @@ public class IndexhomeprofileCtl {
 	
 	@Autowired
 	private UserSrv userSrv;
+	
+	@Autowired
+	private PlaydateSrv playdateSrv;
 	
 //	@Autowired
 //	private StateterritorySrv stateterritorySrv;
@@ -148,7 +154,7 @@ public class IndexhomeprofileCtl {
 		    return "redirect:/playdate"; // redirecting here to playdate for now, b/c insuff time to build out dashboard/home-style page
 		}
 
-		// view all record
+		// view all profile
 		@GetMapping("/profile")
 		public String showAllprofile(
 //				@ModelAttribute("playdate") PlaydateMdl playdateMdl // this needed to display create-new on the page
@@ -184,6 +190,17 @@ public class IndexhomeprofileCtl {
 			UserMdl userObj = userSrv.findById(userProfileId);
 			model.addAttribute("userProfile", userObj); 
 			
+			// list of playdates where createdBy_id = userProfileId -- CURRENT AND FUTURE
+			List<PlaydateMdl> userHostedPlaydateListCurrentPlus = playdateSrv.userHostedPlaydateListCurrentPlus(userProfileId);
+			model.addAttribute("userHostedPlaydateListCurrentPlus", userHostedPlaydateListCurrentPlus);
+			
+			// list of playdates where createdBy_id = userProfileId -- PAST
+			List<PlaydateMdl> userHostedPlaydateListPast = playdateSrv.userHostedPlaydateListPast(userProfileId);
+			model.addAttribute("userHostedPlaydateListPast", userHostedPlaydateListPast);
+			
+			Date todayDate = new Date(); 
+			
+			System.out.println("todayDate: " + todayDate); 
 			System.out.println("Page Display: Profile"); 
 			return "profile/record.jsp";
 		}

@@ -116,18 +116,10 @@
 			
 		</div> <!-- end playdateList2 -->
 		
-				<div id="playdateList2" class="container my-5 ">
+		<div id="playdateList3" class="container my-5 ">
 			
 			<h3>Playdate List My Stuff</h3>
-<%-- 			
-			<form th:action="@{/}">
-    			Filter: 
-    			<input type="text" name="keyword" id="keyword" size="50" th:value="${keyword}" required />&nbsp;
-				<input type="submit" value="Search" />&nbsp;
-    			<input type="button" value="Clear" id="btnClear" onclick="clearSearch()" />
-			</form> --%>
-			
-			
+
 			<!-- <a href= "/playdate/new"><button class="btn btn-primary">Create New Playdate</button></a> -->
 			
 			<table class="table table-striped table-hover table-bordered table-responsive mt-2">
@@ -167,7 +159,7 @@
 				</tbody>
 			</table>
 			
-		</div> <!-- end playdateList2 -->
+		</div> <!-- end playdateList3 -->
 
 	</div> <!-- end main -->  
  	<jsp:include page="/WEB-INF/include/footerbuffer.jsp"/>
