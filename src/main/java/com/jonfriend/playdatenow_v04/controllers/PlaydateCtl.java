@@ -57,10 +57,9 @@ public class PlaydateCtl {
 		List<PlaydateMdl> playdateList2 = playdateSrv.filteredReturn();
 		model.addAttribute("playdateList2", playdateList2);
 		
-		// list of items where createdBy_id = loggedInUserId
-		Long keyword = authenticatedUserId; 
-		List<PlaydateMdl> playdateList3 = playdateSrv.returnMyEventList(keyword);
-		model.addAttribute("playdateList3", playdateList3);
+//		// list of items where createdBy_id = loggedInUserId
+//		List<PlaydateMdl> playdateList3 = playdateSrv.returnCreatedByUserEvents(authenticatedUserId);
+//		model.addAttribute("playdateList3", playdateList3);
 		
 		
 

@@ -17,11 +17,13 @@
 			<div class="col">
 			</div> <!-- end col -->
 			<div class="col-sm-7">
+				
 				<c:if test="${permissionErrorMsg != null}">
 			        <div class="alert alert-warning" role="alert">
 			        	${permissionErrorMsg}
 			        </div>
 			    </c:if>
+			    
 				<div id="profileCard" class="card p-3 d-md-flex justify-content-start">
 					<div class="d-flex justify-content-between">
 						<div class="card p-2 border-0">
@@ -74,6 +76,197 @@
 					</div>
 	
 				</div> <!-- end profileCard -->
+				
+				<div id="userEventsCard" class="card p-3 mt-3 d-md-flex justify-content-start">
+				
+					<h3>
+						<c:choose> 
+							<c:when test="${authUser.id == userProfile.id}">
+							My Organized Playdates
+							</c:when>
+							<c:otherwise>
+							Organized Playdates
+							</c:otherwise>
+						</c:choose>
+						</h3>
+					<ul class="nav nav-tabs">
+						<li class="nav-item">
+							<a class="nav-link active" data-bs-toggle="tab" aria-current="page" href="#userEventsUpcoming">Upcoming</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" data-bs-toggle="tab" href="#userEventsPast">Previous</a>
+						</li>
+					</ul>
+					
+					<div class="tab-content">
+						<div class="tab-pane container active" id="userEventsUpcoming">
+						
+							<table class="table table-striped table-hover table-bordered table-responsive mt-2">
+								<thead>
+									<tr>
+										<!-- <th scope="col">id</th> -->
+										<th scope="col">Event</th>
+										<th scope="col">Status</th>
+										<th scope="col">Date/Time</th>
+									</tr>
+								</thead>
+								<tbody>
+									<c:forEach var="record" items="${userHostedPlaydateListCurrentPlus}">
+										<tr>
+											<td>
+												<a class="text-decoration-none" href="/playdate/${record.id}"  >
+				
+												<c:choose> 
+												<c:when test="${record.eventName.length() == 0}"> 
+													Playdate @ ${record.locationName}
+													</c:when>
+													<c:otherwise> 
+													${record.eventName} @ ${record.locationName}
+				 									</c:otherwise>
+												</c:choose> 
+												</a>
+											</td>
+											<td>${record.eventStatus}
+											<td>
+												<fmt:formatDate value="${record.eventDate}" pattern="MMMM dd"/>, <fmt:formatDate value="${record.eventDate}" pattern="yyyy"/> @ ${record.startTimeTxt}
+											</td>
+										</tr>
+									</c:forEach>
+								</tbody>
+							</table>
+						</div>
+						
+						<div class="tab-pane container fade" id="userEventsPast">
+							<table class="table table-striped table-hover table-bordered table-responsive mt-2">
+								<thead>
+									<tr>
+										<!-- <th scope="col">id</th> -->
+										<th scope="col">Event</th>
+										<th scope="col">Status</th>
+										<th scope="col">Date/Time</th>
+									</tr>
+								</thead>
+								<tbody>
+									<c:forEach var="record" items="${userHostedPlaydateListPast}">
+										<tr>
+											<td>
+												<a class="text-decoration-none" href="/playdate/${record.id}"  >
+				
+												<c:choose> 
+												<c:when test="${record.eventName.length() == 0}"> 
+													Playdate @ ${record.locationName}
+													</c:when>
+													<c:otherwise> 
+													${record.eventName} @ ${record.locationName}
+				 									</c:otherwise>
+												</c:choose> 
+												</a>
+											</td>
+											<td>${record.eventStatus}
+											<td>
+												<fmt:formatDate value="${record.eventDate}" pattern="MMMM dd"/>, <fmt:formatDate value="${record.eventDate}" pattern="yyyy"/> @ ${record.startTimeTxt}
+											</td>
+										</tr>
+									</c:forEach>
+								</tbody>
+							</table>
+						
+						</div>
+					</div>
+				
+				<%-- 
+				
+					<div id="userEventsUpcoming" class="container my-5 ">
+						
+						<table class="table table-striped table-hover table-bordered table-responsive mt-2">
+							<thead>
+								<tr>
+									<!-- <th scope="col">id</th> -->
+									<th scope="col">Event</th>
+									<th scope="col">Status</th>
+									<th scope="col">Date/Time</th>
+								</tr>
+							</thead>
+							<tbody>
+								<c:forEach var="record" items="${userHostedPlaydateListCurrentPlus}">
+									<tr>
+										<td>
+											<a class="text-decoration-none" href="/playdate/${record.id}"  >
+			
+											<c:choose> 
+											<c:when test="${record.eventName.length() == 0}"> 
+												Playdate @ ${record.locationName}
+												</c:when>
+												<c:otherwise> 
+												${record.eventName} @ ${record.locationName}
+			 									</c:otherwise>
+											</c:choose> 
+											</a>
+										</td>
+										<td>${record.eventStatus}
+										<td>
+											<fmt:formatDate value="${record.eventDate}" pattern="MMMM dd"/>, <fmt:formatDate value="${record.eventDate}" pattern="yyyy"/> @ ${record.startTimeTxt}
+										</td>
+									</tr>
+								</c:forEach>
+							</tbody>
+						</table>
+						
+					</div> <!-- end userEventsUpcoming -->
+					
+					<div id="userEventsPast" class="container my-5 ">
+				
+						<h3>
+						<c:choose> 
+							<c:when test="${authUser.id == userProfile.id}">
+							My Hosted Playdates - Previous
+							</c:when>
+							<c:otherwise>
+							Playdates Hosted By ${userProfile.userName} - Previous
+							</c:otherwise>
+						</c:choose>
+						</h3>
+			
+						<!-- <a href= "/playdate/new"><button class="btn btn-primary">Create New Playdate</button></a> -->
+						
+						<table class="table table-striped table-hover table-bordered table-responsive mt-2">
+							<thead>
+								<tr>
+									<!-- <th scope="col">id</th> -->
+									<th scope="col">Event</th>
+									<th scope="col">Status</th>
+									<th scope="col">Date/Time</th>
+								</tr>
+							</thead>
+							<tbody>
+								<c:forEach var="record" items="${userHostedPlaydateListPast}">
+									<tr>
+										<td>
+											<a class="text-decoration-none" href="/playdate/${record.id}"  >
+			
+											<c:choose> 
+											<c:when test="${record.eventName.length() == 0}"> 
+												Playdate @ ${record.locationName}
+												</c:when>
+												<c:otherwise> 
+												${record.eventName} @ ${record.locationName}
+			 									</c:otherwise>
+											</c:choose> 
+											</a>
+										</td>
+										<td>${record.eventStatus}
+										<td>
+											<fmt:formatDate value="${record.eventDate}" pattern="MMMM dd"/>, <fmt:formatDate value="${record.eventDate}" pattern="yyyy"/> @ ${record.startTimeTxt}
+										</td>
+									</tr>
+								</c:forEach>
+							</tbody>
+						</table>
+						
+					</div> <!-- end userEventsPast --> --%>
+				</div> <!-- end userEventsCard -->
+				
+				
 			</div> <!-- end col -->
 			<div class="col">
 			</div> <!-- end col -->

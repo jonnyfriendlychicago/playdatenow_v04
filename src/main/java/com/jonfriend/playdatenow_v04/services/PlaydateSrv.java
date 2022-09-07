@@ -57,17 +57,18 @@ public class PlaydateSrv {
 		return playdateRpo.search(); 
 	}
 	
-	public List<PlaydateMdl> returnMyEventList(Long x) {
-		return playdateRpo.CreatorList(x); 
+	public List<PlaydateMdl> userHostedPlaydateListCurrentPlus(Long x) {
+		return playdateRpo.userHostedPlaydateListCurrentPlus(x); 
+	}
+	
+	public List<PlaydateMdl> userHostedPlaydateListPast(Long x) {
+		return playdateRpo.userHostedPlaydateListPast(x); 
 	}
 	
 	
-	public List<PlaydateMdl> returnMyFutureEventList(Long x) {
-		
-		return playdateRpo.CreatorList(x);
-		
-		
-	}
+//	public List<PlaydateMdl> returnMyFutureEventList(Long x) {
+//		return playdateRpo.CreatorList(x);
+//	}
 	
 	
 }

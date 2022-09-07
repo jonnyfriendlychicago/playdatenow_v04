@@ -37,13 +37,16 @@ public interface PlaydateRpo extends CrudRepository<PlaydateMdl, Long> {
 	 @Query(
 			 value= "SELECT p.* FROM playdatenow.playdate p WHERE p.event_name LIKE '%dino%'"
 			 , nativeQuery = true)
-//	 List<PlaydateMdl> search(String keyword);
 	 List<PlaydateMdl> search();
 	 
 	 @Query(
-			 value= "SELECT p.* FROM playdatenow.playdate p WHERE p.createdBy_id LIKE :keyword order by p.created_at desc"
+			 value= "SELECT p.* FROM playdatenow.playdate p WHERE p.createdBy_id LIKE :keyword and event_date >= curdate() order by p.event_date desc"
 			 , nativeQuery = true)
-	 List<PlaydateMdl> CreatorList(Long keyword);
-//	 List<PlaydateMdl> CreatorList();
+	 List<PlaydateMdl> userHostedPlaydateListCurrentPlus(Long keyword);
+	 
+	 @Query(
+			 value= "SELECT p.* FROM playdatenow.playdate p WHERE p.createdBy_id LIKE :keyword and event_date < curdate() order by p.event_date desc"
+			 , nativeQuery = true)
+	 List<PlaydateMdl> userHostedPlaydateListPast(Long keyword);
 
 }
