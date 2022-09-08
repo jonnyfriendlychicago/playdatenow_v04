@@ -101,7 +101,7 @@
 					<div class="tab-content">
 						<div class="tab-pane container active" id="userEventsUpcoming">
 						
-							<table class="table table-striped table-hover table-bordered table-responsive mt-2">
+							<table class="table table-striped table-hover table-responsive mt-2">
 								<thead>
 									<tr>
 										<!-- <th scope="col">id</th> -->
@@ -137,7 +137,7 @@
 						</div>
 						
 						<div class="tab-pane container fade" id="userEventsPast">
-							<table class="table table-striped table-hover table-bordered table-responsive mt-2">
+							<table class="table table-striped table-hover table-responsive mt-2">
 								<thead>
 									<tr>
 										<!-- <th scope="col">id</th> -->
