@@ -102,7 +102,6 @@
 											<p class="m-0">${playdate.locationAddy}</p>
 										</div>
 										
-										
 										<c:choose>
 											<c:when test="${playdate.userMdl.id != authUser.id}">
 												<div class="card p-2 m-0 border-0">
@@ -117,6 +116,28 @@
 										<div class="card p-2 border-0">
 											<p class="m-0 text-secondary" style="font-size: 0.8rem;">Description</p>
 											<pre style="white-space: pre-wrap">${playdate.eventDescription}</pre>
+										</div>	
+										
+										<p>your rsvp info</p>
+										
+										<div class="card p-2 border-0">
+											<p class="m-0 text-secondary" style="font-size: 0.8rem;">rsvpStatus</p>
+											<p class="m-0">${playdate.rsvpStatus}</p>
+										</div>
+										
+										<div class="card p-2 m-0 border-0">
+											<p class="m-0 text-secondary" style="font-size: 0.8rem;">kidCount</p>
+											<p class="m-0">${playdate.kidCount}</p>
+										</div>
+										
+										<div class="card p-2 m-0 border-0">
+											<p class="m-0 text-secondary" style="font-size: 0.8rem;">adultCount</p>
+											<p class="m-0">${playdate.adultCount}</p>
+										</div>									
+										
+										<div class="card p-2 m-0 border-0">
+											<p class="m-0 text-secondary" style="font-size: 0.8rem;">comment</p>
+											<p class="m-0">${playdate.comment}</p>
 										</div>									
 										
 									<!-- </div>  --><!-- end playdateInfoCard -->
@@ -256,6 +277,40 @@
 												<td>${record.kidCount}</td>
 												<td>${record.adultCount}</td>
 												<td><pre style="white-space: pre-wrap"class="m-0">${record.comment}</pre></td>
+											</tr>
+										</c:forEach>
+									</tbody>
+								</table>
+		
+							</div> <!-- end rsvpListRow -->
+							
+							<div id="rsvpListRow" class="row m-1">	
+								<p class="text-center m-1" style="font-size: 1.5rem;">Rsvp List NEW</p>
+								
+	 							<table class="table table-striped table-hover table-bordered table-responsive mt-2">
+									<thead>
+										<tr>
+											<!-- <th scope="col">Existance of Record</th> -->
+											<th scope="col">Name</th>
+											<th scope="col">Name</th> 
+											<th scope="col">Status</th>
+											<th scope="col"># of Kids</th>
+											<th scope="col"># of Adults</th>
+											<th scope="col">Comment</th>
+											
+										</tr>
+									</thead>
+									<tbody>
+										<c:forEach var="record" items="${playdateRsvpList}">
+											<tr>
+												
+												<!-- <td>hello</td> -->
+												<td>${record[0]}</td>
+												<td><a class="text-decoration-none" href="/profile/${record[5]}">${record[0]}</a></td>
+												<td>${record[3]}</td>
+												<td>${record[1]}</td>
+												<td>${record[2]}</td>
+												<td><pre style="white-space: pre-wrap"class="m-0">${record[4]}</pre></td> 
 											</tr>
 										</c:forEach>
 									</tbody>

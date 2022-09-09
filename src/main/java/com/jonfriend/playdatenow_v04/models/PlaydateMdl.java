@@ -66,6 +66,21 @@ public class PlaydateMdl {
 	// Aug deployment note: presently not incorporating this element, for biz reasons. 
 	private Integer maxCountAdults; 
 	
+	// fields added to house host RSVP
+	
+    @NotBlank(message="RSVP status is required.")
+    private String rsvpStatus;
+    
+    @NotNull (message = "Minimum one child on the RSVP")
+    @Min(value =1, message="Minimum one child on the RSVP.")
+    private Integer kidCount;
+    
+    @NotNull (message = "Minimum one adult on the RSVP")
+    @Min(value =1, message="Minimum one adult on the RSVP.")
+    private Integer adultCount;
+    
+    private String comment;
+	
     // end: entity-specific table fields
     
     // start: code for joins
@@ -219,6 +234,41 @@ public class PlaydateMdl {
 		this.stateterritoryMdl = stateterritoryMdl;
 	}
 
+	public String getRsvpStatus() {
+		return rsvpStatus;
+	}
+
+	public void setRsvpStatus(String rsvpStatus) {
+		this.rsvpStatus = rsvpStatus;
+	}
+
+	public Integer getKidCount() {
+		return kidCount;
+	}
+
+	public void setKidCount(Integer kidCount) {
+		this.kidCount = kidCount;
+	}
+
+	public Integer getAdultCount() {
+		return adultCount;
+	}
+
+	public void setAdultCount(Integer adultCount) {
+		this.adultCount = adultCount;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
+	
+	
+	
     // end: getters and setters
     
 // end mdl

@@ -59,7 +59,6 @@ public class RsvpCtl {
 		return "rsvp/create.jsp"; 
 	}
 	
-	// JRF: DEF NEED THIS ONE!!!
 	// process the create-new  
 	@PostMapping("/playdate/{id}/rsvp/create")
 	public String addNewRsvp(
@@ -128,7 +127,6 @@ public class RsvpCtl {
 		return "rsvp/record.jsp";
 	}
 
-	// JRF: THIS IS ABSOLUTELY NEEDED!  The code style section makes it look old school, but this is actually delivering the editRsvp interface on a page that contains the playdate info
 	// display edit page
 	@GetMapping("rsvp/{rsvpId}/edit")
 	public String editRsvp(
@@ -200,8 +198,6 @@ public class RsvpCtl {
 		return "rsvp/edit.jsp";
 	}
 	
-
-	// JRF: DEF NEED THIS ONE
 	// process the edit
 	@PostMapping("/rsvp/edit")
 	public String PostTheEditRsvp(
@@ -296,7 +292,6 @@ public class RsvpCtl {
 		}
 	} 
 	
-	// JRF: DEF NEED THIS ONE
 	// delete rsvp
     @DeleteMapping("/rsvp/{id}")
     public String deleteRsvp(

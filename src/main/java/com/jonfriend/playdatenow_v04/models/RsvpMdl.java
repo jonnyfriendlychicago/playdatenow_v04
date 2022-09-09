@@ -36,7 +36,6 @@ public class RsvpMdl {
 
     // begin: entity-specific table fields
     
-//    @NotNull (message = "null thang: RSVP status is required.")
     @NotBlank(message="RSVP status is required.")
     private String rsvpStatus;
     
