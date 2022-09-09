@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.jonfriend.playdatenow_v04.models.RsvpMdl;
+import com.jonfriend.playdatenow_v04.pojos.PlaydateUserUnionRsvpUser;
 import com.jonfriend.playdatenow_v04.models.PlaydateMdl;
 import com.jonfriend.playdatenow_v04.repositories.RsvpRpo;
 
@@ -52,7 +53,11 @@ public class RsvpSrv {
 		return rsvpRpo.findAllByPlaydateMdl(x);
 	}
 	
-	public List<Object[]> playdateRsvpList(Long x) {
+//	public List<Object[]> playdateRsvpList(Long x) {
+//		return rsvpRpo.playdateRsvpList(x); 
+//	}
+	
+	public List<PlaydateUserUnionRsvpUser> playdateRsvpList(Long x) {
 		return rsvpRpo.playdateRsvpList(x); 
 	}
 	

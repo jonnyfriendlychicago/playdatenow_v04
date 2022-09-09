@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.jonfriend.playdatenow_v04.models.UserMdl;
+import com.jonfriend.playdatenow_v04.pojos.PlaydateUserUnionRsvpUser;
 import com.jonfriend.playdatenow_v04.models.RsvpMdl;
 import com.jonfriend.playdatenow_v04.models.PlaydateMdl;
 import com.jonfriend.playdatenow_v04.services.RsvpSrv;
@@ -197,20 +198,22 @@ public class PlaydateCtl {
 		
 		// Begin: trying to get new RSVP list to work
 		
-		List<Object[]> playdateRsvpList = rsvpSrv.playdateRsvpList(playdateId);
-		System.out.println("playdateRsvpList: " + playdateRsvpList); // this just shows us a list of obj we can't use 
+//		List<Object[]> playdateRsvpList = rsvpSrv.playdateRsvpList(playdateId);
+//		System.out.println("playdateRsvpList: " + playdateRsvpList); // this just shows us a list of obj we can't use 
+//		model.addAttribute("playdateRsvpList", playdateRsvpList); // this line does not seem useful; can't pull data out of this, it seems; 
+		
+		List<PlaydateUserUnionRsvpUser> playdateRsvpList = rsvpSrv.playdateRsvpList(playdateId);
+//		System.out.println("playdateRsvpList: " + playdateRsvpList); // this just shows us a list of obj we can't use 
 		model.addAttribute("playdateRsvpList", playdateRsvpList); // this line does not seem useful; can't pull data out of this, it seems; 
+
 		
-//		Integer playdateRsvpListCount = playdateRsvpList.size(); 
-//		System.out.println("playdateRsvpListCount: " + playdateRsvpListCount);
-		
-		for (int a=0; a < playdateRsvpList.size(); a++  ) {
-			Object[] rsvpObj = playdateRsvpList.get(a); 
-			System.out.println("rsvpObj:" + rsvpObj); 
-			for (int b=0; b< rsvpObj.length; b++) {
-				System.out.println(rsvpObj[b]); 
-			}
-		}
+//		for (int a=0; a < playdateRsvpList.size(); a++  ) {
+//			Object[] rsvpObj = playdateRsvpList.get(a); 
+//			System.out.println("rsvpObj:" + rsvpObj); 
+//			for (int b=0; b< rsvpObj.length; b++) {
+//				System.out.println(rsvpObj[b]); 
+//			}
+//		}
 
 		
 		// START: fun with making lists for page consumption

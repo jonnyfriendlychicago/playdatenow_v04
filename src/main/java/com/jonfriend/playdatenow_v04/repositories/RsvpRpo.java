@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 //import com.jonfriend.playdatenow_v04.models.TwintwoMdl;
 import com.jonfriend.playdatenow_v04.models.RsvpMdl;
+import com.jonfriend.playdatenow_v04.pojos.PlaydateUserUnionRsvpUser;
 import com.jonfriend.playdatenow_v04.models.PlaydateMdl;
 
 @Repository
@@ -25,10 +26,15 @@ public interface RsvpRpo extends CrudRepository<RsvpMdl, Long> {
 //			 "select r.* from playdatenow.rsvp r where r.playdate_id = :keyword"
 //			 "select r.kid_count, r.adult_count, r.rsvp_status, r.comment from playdatenow.rsvp r where r.playdate_id = :keyword"
 //			 "select r.kid_count as kid_count, r.adult_count as adult_count, r.rsvp_status as rsvp_status, r.comment as comment from playdatenow.rsvp r where r.playdate_id = :keyword union all select p.kid_count as kid_count, p.adult_count as adult_count, p.rsvp_status as rsvp_status, p.comment as comment from playdatenow.playdate p where p.id = :keyword"
-			 "select u.user_name as userName, r.kid_count as kidCount, r.adult_count as adultCount, r.rsvp_status as rsvpStatus, r.comment as comment, u.id as userId from playdatenow.rsvp r left join playdatenow.user u on r.createdby_id = u.id  where r.playdate_id = :keyword"
+			 "select u.first_name as firstName, u.user_name as userName, r.kid_count as kidCount, r.adult_count as adultCount, r.rsvp_status as rsvpStatus, r.comment as comment, u.id as userId from playdatenow.rsvp r left join playdatenow.user u on r.createdby_id = u.id  where r.playdate_id = :keyword"
 			 + " union all "
-			 + "select u.user_name as userName, p.kid_count as kidCount, p.adult_count as adultCount, p.rsvp_status as rsvpStatus, p.comment as comment, u.id as userId from playdatenow.playdate p left join playdatenow.user u on p.createdby_id = u.id  where p.id = :keyword"
+			 + "select u.first_name as firstName, u.user_name as userName, p.kid_count as kidCount, p.adult_count as adultCount, p.rsvp_status as rsvpStatus, p.comment as comment, u.id as userId from playdatenow.playdate p left join playdatenow.user u on p.createdby_id = u.id  where p.id = :keyword"
 			 , nativeQuery = true)
-	List<Object[]> playdateRsvpList(Long keyword);
+	
+//	List<Object[]> playdateRsvpList(Long keyword);
+	
+	List<PlaydateUserUnionRsvpUser> playdateRsvpList(Long keyword);
+	
+	
 
 }
