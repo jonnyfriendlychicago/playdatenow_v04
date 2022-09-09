@@ -51,6 +51,13 @@ public class RsvpSrv {
 	public List<RsvpMdl> returnAllRsvpForPlaydate(PlaydateMdl x){
 		return rsvpRpo.findAllByPlaydateMdl(x);
 	}
+	
+	public List<Object[]> playdateRsvpList(Long x) {
+		return rsvpRpo.playdateRsvpList(x); 
+	}
+	
+
+	
 
 	
 	

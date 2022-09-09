@@ -1,5 +1,7 @@
 package com.jonfriend.playdatenow_v04.controllers;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -178,6 +180,8 @@ public class PlaydateCtl {
 			
 			openKidsSpots = playdateObj.getMaxCountKids() - sumRsvpDotKidsCount; 
 			
+			
+			
 			RsvpMdl rsvpObjForAuthUser = rsvpSrv.findById(rsvpIdForAuthUser); 
 		// end: fun with functions & loops
 
@@ -190,6 +194,57 @@ public class PlaydateCtl {
 		model.addAttribute("sumRsvpDotAdultsCount", sumRsvpDotAdultsCount); 
 		
 		model.addAttribute("openKidsSpots", openKidsSpots); 
+		
+		// Begin: trying to get new RSVP list to work
+		
+		List<Object[]> playdateRsvpList = rsvpSrv.playdateRsvpList(playdateId);
+		System.out.println("playdateRsvpList: " + playdateRsvpList); // this just shows us a list of obj we can't use 
+		model.addAttribute("playdateRsvpList", playdateRsvpList); // this line does not seem useful; can't pull data out of this, it seems; 
+		
+//		Integer playdateRsvpListCount = playdateRsvpList.size(); 
+//		System.out.println("playdateRsvpListCount: " + playdateRsvpListCount);
+		
+		for (int a=0; a < playdateRsvpList.size(); a++  ) {
+			Object[] rsvpObj = playdateRsvpList.get(a); 
+			System.out.println("rsvpObj:" + rsvpObj); 
+			for (int b=0; b< rsvpObj.length; b++) {
+				System.out.println(rsvpObj[b]); 
+			}
+		}
+
+		
+		// START: fun with making lists for page consumption
+		
+		// quick/dirty stateList
+		String[] stateList = { "Alabama", "Alaska", "Arizona"};
+		model.addAttribute("stateList", stateList ); 
+		
+		// initalize empty array list (that we'll populate then send to page)
+//		ArrayList<Object> stateListEnhanced = new ArrayList<Object>();
+		List<Object> stateListEnhanced = new ArrayList<Object>();
+		
+		// initialize feeder lists: 
+		String[] stateSpellList = {"Alabama" , "Alaska" , "Arizona"}; 
+		String[] stateAbbrvList = {"AL" , "AK" , "AZ"}; 
+		
+		// get variable for submitting to the loop as upper boundary
+		Integer stateListSpellDrawerCount =  stateSpellList.length; 
+		 
+		// initialize for-loop 
+		
+		for (int i=0; i < stateListSpellDrawerCount; i++  ) {
+//				System.out.println("value of item in drawer " + i + " -- " + stateSpellList[i]);
+			HashMap<String, String> singleStateHashMap = new HashMap<String, String>();
+			singleStateHashMap.put("'StateName'", "'" + stateSpellList[i] + "'");
+			singleStateHashMap.put("'StateAbbv'", "'" + stateAbbrvList[i] + "'");
+			stateListEnhanced.add(singleStateHashMap); 
+		}
+		
+		System.out.println("stateListEnhanced: " + stateListEnhanced); 
+		model.addAttribute("stateListEnhanced", stateListEnhanced ); 
+		
+		// END: fun with making lists for page consumption
+		
 		
 		return "playdate/record.jsp";
 	}
