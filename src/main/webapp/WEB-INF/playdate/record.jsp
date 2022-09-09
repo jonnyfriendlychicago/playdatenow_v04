@@ -290,8 +290,7 @@
 	 							<table class="table table-striped table-hover table-bordered table-responsive mt-2">
 									<thead>
 										<tr>
-											<!-- <th scope="col">Existance of Record</th> -->
-											<th scope="col">Name</th>
+											<th scope="col">firstName</th> 
 											<th scope="col">Name</th> 
 											<th scope="col">Status</th>
 											<th scope="col"># of Kids</th>
@@ -302,15 +301,21 @@
 									</thead>
 									<tbody>
 										<c:forEach var="record" items="${playdateRsvpList}">
-											<tr>
-												
-												<!-- <td>hello</td> -->
+											<%-- <tr>
 												<td>${record[0]}</td>
 												<td><a class="text-decoration-none" href="/profile/${record[5]}">${record[0]}</a></td>
 												<td>${record[3]}</td>
 												<td>${record[1]}</td>
 												<td>${record[2]}</td>
 												<td><pre style="white-space: pre-wrap"class="m-0">${record[4]}</pre></td> 
+											</tr> --%>
+											<tr>
+												<td>${record.firstName}</td>
+												<td><a class="text-decoration-none" href="/profile/${record.userId}">${record.userName}</a></td>
+												<td>${record.rsvpStatus}</td>
+												<td>${record.kidCount}</td>
+												<td>${record.adultCount}</td>
+												<td><pre style="white-space: pre-wrap"class="m-0">${record.comment}</pre></td> 
 											</tr>
 										</c:forEach>
 									</tbody>
