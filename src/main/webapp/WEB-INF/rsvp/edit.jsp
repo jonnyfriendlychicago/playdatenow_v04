@@ -162,7 +162,7 @@
 									
 									<div id="rsvpCard" class="card p-3 d-md-flex justify-content-start">
 
-											<div class="d-flex justify-content-between">
+					<%-- 						<div class="d-flex justify-content-between">
 												<div class="card p-2 border-0">
 													<p class="m-0 text-secondary" style="font-size: 0.8rem;">
 														You RSVPed on
@@ -175,6 +175,18 @@
 												</div>
 												<a href="/playdate/${playdate.id}"><button class="btn btn-secondary  mb-2">Cancel</button></a>
 
+											</div> --%>
+											
+											<div class="row">
+												<div class="col"></div>
+												<div class="col">
+													<p class="m-0 text-center" style="font-size: 1.25rem;">Your RSVP</p>
+												</div>
+												
+												<div class="col d-flex justify-content-end">
+													<%-- <a href= "/rsvp/${rsvpObjForAuthUser.id}/edit"><button class="btn btn-primary mb-2">Edit</button></a> --%>
+													<a href="/playdate/${playdate.id}"><button class="btn btn-secondary  mb-2">Cancel</button></a>
+												</div>
 											</div>
 							
 <%-- 											<div class="card p-2 m-0 border-0">
@@ -248,9 +260,35 @@
 							</div> <!-- end row -->
 							
 							<div id="rsvpListRow" class="row m-1">	
-								<p class="text-center m-1" style="font-size: 1.5rem;">Rsvp List</p>
+								<table class="table table-striped table-hover table-responsive mt-2 caption-top">
+									<caption class="text-dark" style="font-size: 1.5rem;">Rsvp List</caption>
+									<%-- <caption class="text-dark" >Rsvp List</caption> --%>
+									<thead class="border-top-0">
+										<tr>
+											<th scope="col">Name</th> 
+											<th scope="col">Status</th>
+											<th scope="col"># of Kids</th>
+											<th scope="col"># of Adults</th>
+											<th scope="col">Comment</th>
+											
+										</tr>
+									</thead>
+									<tbody>
+										<c:forEach var="record" items="${playdateRsvpList}">
+											<tr>
+												<td><a class="text-decoration-none" href="/profile/${record.userId}">${record.userName}</a></td>
+												<td>${record.rsvpStatus}</td>
+												<td>${record.kidCount}</td>
+												<td>${record.adultCount}</td>
+												<td><pre style="white-space: pre-wrap"class="m-0">${record.comment}</pre></td> 
+											</tr>
+										</c:forEach>
+									</tbody>
+								</table>
+								<!-- <p class="text-center m-1" style="font-size: 1.5rem;">Rsvp List</p> -->
 								
-	 							<table class="table table-striped table-hover table-bordered table-responsive mt-2">
+								<%-- 	 							
+								<table class="table table-striped table-hover table-bordered table-responsive mt-2">
 									<thead>
 										<tr>
 											<th scope="col">Name</th>
@@ -272,8 +310,9 @@
 											</tr>
 										</c:forEach>
 									</tbody>
-								</table>
-							</div> <!-- end rsvpListRow -->
+								</table> 
+								--%>
+							</div> <!-- end rsvpListRow --> 
 
 					</div> <!-- end playdateCard -->
 			</div> <!-- end col -->

@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.jonfriend.playdatenow_v04.models.RsvpMdl;
 import com.jonfriend.playdatenow_v04.models.PlaydateMdl;
 import com.jonfriend.playdatenow_v04.models.UserMdl;
+import com.jonfriend.playdatenow_v04.pojos.PlaydateUserUnionRsvpUser;
 import com.jonfriend.playdatenow_v04.services.RsvpSrv;
 import com.jonfriend.playdatenow_v04.services.PlaydateSrv;
 import com.jonfriend.playdatenow_v04.services.UserSrv;
@@ -35,29 +36,29 @@ public class RsvpCtl {
 	@Autowired
 	private PlaydateSrv playdateSrv;
 	
-	// JRF: THINK WE CAN TAKE THIS OUT NOW, will delete after app successfully deployed for first time
-	// display create-new page
-	@GetMapping("/playdate/{id}/rsvp/new")
-	public String newRsvp(
-			@PathVariable ("id") Long playdateId
-			, @ModelAttribute("rsvp") RsvpMdl rsvpMdl
-			, Model model
-			, HttpSession session
-			) {
-		 
-		// log out the unauth / deliver the auth user data
-		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
-		Long authenticatedUserId = (Long) session.getAttribute("userId");
-		model.addAttribute("authUser", userSrv.findById(authenticatedUserId));
-		
-		// getting the parent record from the pathvariable
-		PlaydateMdl playdateObj = playdateSrv.findById(playdateId);
-		// sending that parent record to the page
-		model.addAttribute("playdate", playdateObj);
-		// placeholder for getting/sending list of already created rsvp
-
-		return "rsvp/create.jsp"; 
-	}
+//	// JRF: THINK WE CAN TAKE THIS OUT NOW, will delete after app successfully deployed for first time
+//	// display create-new page
+//	@GetMapping("/playdate/{id}/rsvp/new")
+//	public String newRsvp(
+//			@PathVariable ("id") Long playdateId
+//			, @ModelAttribute("rsvp") RsvpMdl rsvpMdl
+//			, Model model
+//			, HttpSession session
+//			) {
+//		 
+//		// log out the unauth / deliver the auth user data
+//		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
+//		Long authenticatedUserId = (Long) session.getAttribute("userId");
+//		model.addAttribute("authUser", userSrv.findById(authenticatedUserId));
+//		
+//		// getting the parent record from the pathvariable
+//		PlaydateMdl playdateObj = playdateSrv.findById(playdateId);
+//		// sending that parent record to the page
+//		model.addAttribute("playdate", playdateObj);
+//		// placeholder for getting/sending list of already created rsvp
+//
+//		return "rsvp/create.jsp"; 
+//	}
 	
 	// process the create-new  
 	@PostMapping("/playdate/{id}/rsvp/create")
@@ -104,28 +105,28 @@ public class RsvpCtl {
 		}
 	} 
 	
-	// JRF: THINK WE CAN TAKE THIS OUT NOW, will delete after app successfully deployed for first time
-	// view record
-	@GetMapping("/rsvp/{id}")
-	public String showRsvp(
-			@PathVariable("id") Long rsvpId
-			, Model model
-			, HttpSession session
-			) {
-		
-		// log out the unauth / deliver the auth use data
-		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
-		Long AuthenticatedUserId = (Long) session.getAttribute("userId");
-		model.addAttribute("authUser", userSrv.findById(AuthenticatedUserId));
-		
-		RsvpMdl rsvpObj = rsvpSrv.findById(rsvpId); // get the object that is the primary object displayed on this page
-		PlaydateMdl playdateObj = rsvpObj.getPlaydateMdl(); // get the object that is the parent to the primary object
-		
-		model.addAttribute("rsvp", rsvpObj); // deliver the object that is the primary object on this page 
-		model.addAttribute("playdate", playdateObj);   // deliver the object that is the parent to the primary object on this page
-		
-		return "rsvp/record.jsp";
-	}
+//	// JRF: THINK WE CAN TAKE THIS OUT NOW, will delete after app successfully deployed for first time
+//	// view record
+//	@GetMapping("/rsvp/{id}")
+//	public String showRsvp(
+//			@PathVariable("id") Long rsvpId
+//			, Model model
+//			, HttpSession session
+//			) {
+//		
+//		// log out the unauth / deliver the auth use data
+//		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
+//		Long AuthenticatedUserId = (Long) session.getAttribute("userId");
+//		model.addAttribute("authUser", userSrv.findById(AuthenticatedUserId));
+//		
+//		RsvpMdl rsvpObj = rsvpSrv.findById(rsvpId); // get the object that is the primary object displayed on this page
+//		PlaydateMdl playdateObj = rsvpObj.getPlaydateMdl(); // get the object that is the parent to the primary object
+//		
+//		model.addAttribute("rsvp", rsvpObj); // deliver the object that is the primary object on this page 
+//		model.addAttribute("playdate", playdateObj);   // deliver the object that is the parent to the primary object on this page
+//		
+//		return "rsvp/record.jsp";
+//	}
 
 	// display edit page
 	@GetMapping("rsvp/{rsvpId}/edit")
@@ -194,6 +195,13 @@ public class RsvpCtl {
 		model.addAttribute("sumRsvpDotAdultsCount", sumRsvpDotAdultsCount); 
 		
 		model.addAttribute("openKidsSpots", openKidsSpots); 
+		
+		// getting RSVP list to look like other playdate mgmt pages
+		Long playdateId = playdateObj.getId(); 
+		// get/deliver list of unioned rsvp records
+		List<PlaydateUserUnionRsvpUser> playdateRsvpList = rsvpSrv.playdateRsvpList(playdateId);
+		model.addAttribute("playdateRsvpList", playdateRsvpList);  
+		
 
 		return "rsvp/edit.jsp";
 	}

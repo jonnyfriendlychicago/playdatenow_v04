@@ -105,7 +105,7 @@
 								<thead>
 									<tr>
 										<!-- <th scope="col">id</th> -->
-										<th scope="col">Event</th>
+										<th scope="col">EventX</th>
 										<th scope="col">Status</th>
 										<th scope="col">Date/Time</th>
 									</tr>

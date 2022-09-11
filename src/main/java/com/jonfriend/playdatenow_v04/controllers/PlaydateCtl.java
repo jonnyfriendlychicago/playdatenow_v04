@@ -56,23 +56,8 @@ public class PlaydateCtl {
 		List<PlaydateMdl> playdateList = playdateSrv.returnAll();
 		model.addAttribute("playdateList", playdateList);
 
-		// list of items with a fixed query (event name contains 'dino'
-		List<PlaydateMdl> playdateList2 = playdateSrv.filteredReturn();
-		model.addAttribute("playdateList2", playdateList2);
-		
-//		// list of items where createdBy_id = loggedInUserId
-//		List<PlaydateMdl> playdateList3 = playdateSrv.returnCreatedByUserEvents(authenticatedUserId);
-//		model.addAttribute("playdateList3", playdateList3);
-		
-		
-
 		return "playdate/list.jsp";
 	}
-	
-	
-	
-	
-	
 	
 	// display create-new page
 	@GetMapping("/playdate/new")
@@ -122,7 +107,7 @@ public class PlaydateCtl {
 			
 			Long newlyCreatedPlaydateID = playdateMdl.getId();  
 			
-			redirectAttributes.addFlashAttribute("successMsg", "This playdate is gonna be awesome.  Save your RSVP below to add yourself and kid(s) to the attendee list.");
+			redirectAttributes.addFlashAttribute("successMsg", "This playdate is gonna be awesome!  Make sure you invite some friends to RSVP.");
 			return "redirect:/playdate/" + newlyCreatedPlaydateID;
 		}
 	}
@@ -202,9 +187,9 @@ public class PlaydateCtl {
 //		System.out.println("playdateRsvpList: " + playdateRsvpList); // this just shows us a list of obj we can't use 
 //		model.addAttribute("playdateRsvpList", playdateRsvpList); // this line does not seem useful; can't pull data out of this, it seems; 
 		
+		// get/deliver list of unioned rsvp records
 		List<PlaydateUserUnionRsvpUser> playdateRsvpList = rsvpSrv.playdateRsvpList(playdateId);
-//		System.out.println("playdateRsvpList: " + playdateRsvpList); // this just shows us a list of obj we can't use 
-		model.addAttribute("playdateRsvpList", playdateRsvpList); // this line does not seem useful; can't pull data out of this, it seems; 
+		model.addAttribute("playdateRsvpList", playdateRsvpList);  
 
 		
 //		for (int a=0; a < playdateRsvpList.size(); a++  ) {
@@ -334,6 +319,10 @@ public class PlaydateCtl {
 		
 		model.addAttribute("hasOneOrMoreRsvp", hasOneOrMoreRsvp);
 		
+		
+		// get/deliver list of unioned rsvp records
+		List<PlaydateUserUnionRsvpUser> playdateRsvpList = rsvpSrv.playdateRsvpList(playdateId);
+		model.addAttribute("playdateRsvpList", playdateRsvpList);
 		return "playdate/edit.jsp";
 	}
 	
