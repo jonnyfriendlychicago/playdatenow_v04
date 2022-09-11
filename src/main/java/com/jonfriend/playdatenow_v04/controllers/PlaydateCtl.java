@@ -116,7 +116,7 @@ public class PlaydateCtl {
 	@GetMapping("/playdate/{id}")
 	public String showPlaydate(
 			@PathVariable("id") Long playdateId
-			, @ModelAttribute("rsvp") RsvpMdl rsvpMdl // added, trying to put RSVP form on page
+			, @ModelAttribute("rsvp") RsvpMdl rsvpMdl // enables deliver of a RSVP record on the page
 			, Model model
 			, HttpSession session
 			) {
@@ -126,79 +126,50 @@ public class PlaydateCtl {
 		Long authenticatedUserId = (Long) session.getAttribute("userId");
 		model.addAttribute("authUser", userSrv.findById(authenticatedUserId));
 		
-		UserMdl currentUserMdl = userSrv.findById(authenticatedUserId); // used for show/not edit button
-		PlaydateMdl playdateObj = playdateSrv.findById(playdateId); 
-		List<RsvpMdl> rsvpList = rsvpSrv.returnAllRsvpForPlaydate(playdateObj);
+		UserMdl currentUserMdl = userSrv.findById(authenticatedUserId); // used for show/orNot edit playdate button
+		PlaydateMdl playdateObj = playdateSrv.findById(playdateId); // display native playdate fields, etc.
 		
-		// start: fun with functions & loops
-			Integer rsvpCount = rsvpList.size(); // get a count of how many items in the list
-			Integer sumRsvpDotKidsCount = 0; // instantiate the java variable that we will update in the loop 
-			Boolean rsvpExistsCreatedByAuthUser = false; // instantiate the java variable that we will update in the loop
-			
-			Long rsvpIdForAuthUser = (long) 0; 
-			
-			Integer sumRsvpDotAdultsCount = 0; // instantiate the java variable that we will update in the loop
-			Integer openKidsSpots = 0; // instantiate the java variable that we will update in the loop
-			
-			for (int i=0; i < rsvpCount; i++  ) {
-				System.out.println("RSVP #" + i +  " (" + rsvpList.get(i).getUserMdl().getUserName() + "): " + rsvpList.get(i).getKidCount() + " (" + rsvpList.get(i).getRsvpStatus() + ")"  ); 
-				
-				// JRF: line above replaced by if/else below.   let's see how it goes
-				if ( rsvpList.get(i).getRsvpStatus().equals("In")) {
-					sumRsvpDotKidsCount = sumRsvpDotKidsCount + rsvpList.get(i).getKidCount(); 
-				} else {
-					sumRsvpDotKidsCount = sumRsvpDotKidsCount + 0; 
-				}
-				
-				if ( rsvpList.get(i).getRsvpStatus().equals("In")) {
-					sumRsvpDotAdultsCount = sumRsvpDotAdultsCount + rsvpList.get(i).getAdultCount(); 
-				} else {
-					sumRsvpDotAdultsCount = sumRsvpDotAdultsCount + 0; 
-				}
-				
-				
-				if (rsvpList.get(i).getUserMdl().equals(currentUserMdl) )
-				{
-					rsvpExistsCreatedByAuthUser = true; // if there's a a match, set to true.  that's it, that's all you gotta do. 
-					rsvpIdForAuthUser = rsvpList.get(i).getId(); 
-				}   
-			}
-			
-			openKidsSpots = playdateObj.getMaxCountKids() - sumRsvpDotKidsCount; 
-			
-			
-			
-			RsvpMdl rsvpObjForAuthUser = rsvpSrv.findById(rsvpIdForAuthUser); 
-		// end: fun with functions & loops
+		// begin: calculate various RSVP-related stats.  NOTE: this all could be done with native queries as well, but this is good function/loop practice.  
+		List<RsvpMdl> rsvpList = rsvpSrv.returnAllRsvpForPlaydate(playdateObj); // list of rsvps, which we will use downstream
+		Integer rsvpCount = 0; 							// instantiate the java variable that we will update in the loop
+		Integer aggKidsCount = 0; 						// instantiate the java variable that we will update in the loop 
+		Integer aggAdultsCount = 0; 					// instantiate the java variable that we will update in the loop
+		Boolean rsvpExistsCreatedByAuthUser = false; 	// instantiate the java variable that we will update in the loop
+		Integer openKidsSpots = 0; 						// instantiate the java variable that we will update in the loop
+		
+		for (int i=0; i < rsvpList.size(); i++  ) { 	// for each record in the list of RSVPs... 
+			if ( rsvpList.get(i).getRsvpStatus().equals("In")) { // we only count the 'in' records towards totals
+				rsvpCount += 1;  
+				aggKidsCount += rsvpList.get(i).getKidCount();
+				aggAdultsCount += rsvpList.get(i).getAdultCount(); 
+			} 
+			if (rsvpList.get(i).getUserMdl().equals(currentUserMdl) )  // this 'if' sets needed flags if it exists for the logged in user, and delivers the RSVP object to the page as well
+			{
+				rsvpExistsCreatedByAuthUser = true;  
+				RsvpMdl rsvpObjForAuthUser = rsvpSrv.findById(rsvpList.get(i).getId()); 
+				model.addAttribute("rsvpObjForAuthUser", rsvpObjForAuthUser); 
+			}   
+		}
+		
+		if (playdateObj.getRsvpStatus().equals("In")) { // this 'if' accounts for the host family
+			rsvpCount += 1;  
+			aggKidsCount += playdateObj.getKidCount(); 
+			aggAdultsCount += playdateObj.getAdultCount(); 				
+		}
+		
+		openKidsSpots = playdateObj.getMaxCountKids() - aggKidsCount; 
 
 		model.addAttribute("playdate", playdateObj);
 		model.addAttribute("rsvpCount", rsvpCount); 
-		model.addAttribute("sumRsvpDotKidsCount", sumRsvpDotKidsCount); 
+		model.addAttribute("aggKidsCount", aggKidsCount); 
 		model.addAttribute("rsvpExistsCreatedByAuthUser", rsvpExistsCreatedByAuthUser);
-		model.addAttribute("rsvpObjForAuthUser", rsvpObjForAuthUser); 
 		model.addAttribute("rsvpList", rsvpList);
-		model.addAttribute("sumRsvpDotAdultsCount", sumRsvpDotAdultsCount); 
-		
+		model.addAttribute("aggAdultsCount", aggAdultsCount); 
 		model.addAttribute("openKidsSpots", openKidsSpots); 
-		
-		// Begin: trying to get new RSVP list to work
-		
-//		List<Object[]> playdateRsvpList = rsvpSrv.playdateRsvpList(playdateId);
-//		System.out.println("playdateRsvpList: " + playdateRsvpList); // this just shows us a list of obj we can't use 
-//		model.addAttribute("playdateRsvpList", playdateRsvpList); // this line does not seem useful; can't pull data out of this, it seems; 
 		
 		// get/deliver list of unioned rsvp records
 		List<PlaydateUserUnionRsvpUser> playdateRsvpList = rsvpSrv.playdateRsvpList(playdateId);
 		model.addAttribute("playdateRsvpList", playdateRsvpList);  
-
-		
-//		for (int a=0; a < playdateRsvpList.size(); a++  ) {
-//			Object[] rsvpObj = playdateRsvpList.get(a); 
-//			System.out.println("rsvpObj:" + rsvpObj); 
-//			for (int b=0; b< rsvpObj.length; b++) {
-//				System.out.println(rsvpObj[b]); 
-//			}
-//		}
 
 		
 		// START: fun with making lists for page consumption
@@ -232,8 +203,6 @@ public class PlaydateCtl {
 		model.addAttribute("stateListEnhanced", stateListEnhanced ); 
 		
 		// END: fun with making lists for page consumption
-		
-		
 		return "playdate/record.jsp";
 	}
 
@@ -259,41 +228,41 @@ public class PlaydateCtl {
 
 		// start: fun with functions & loops
 			Integer rsvpCount = rsvpList.size(); // get a count of how many items in the list
-			Integer sumRsvpDotKidsCount = 0; // instantiate the java variable that we will update in the loop 
+			Integer aggKidsCount = 0; // instantiate the java variable that we will update in the loop 
 			Boolean rsvpExistsCreatedByAuthUser = false; // instantiate the java variable that we will update in the loop
 			
-			Long rsvpIdForAuthUser = (long) 0; 
+			Long rsvpIdCreatedByAuthUser = (long) 0; 
 			
-			Integer sumRsvpDotAdultsCount = 0; // instantiate the java variable that we will update in the loop
+			Integer aggAdultsCount = 0; // instantiate the java variable that we will update in the loop
 			Integer openKidsSpots = 0; // instantiate the java variable that we will update in the loop
 			
 			for (int i=0; i < rsvpCount; i++  ) {
 				System.out.println("RSVP #" + i +  " (" + rsvpList.get(i).getUserMdl().getUserName() + "): " + rsvpList.get(i).getKidCount() + " (" + rsvpList.get(i).getRsvpStatus() + ")"  ); 
 				
-	//			sumRsvpDotKidsCount += rsvpList.get(i).getKidCount();
+	//			aggKidsCount += rsvpList.get(i).getKidCount();
 				// JRF: line above replaced by if/else below.   let's see how it goes
 				if ( rsvpList.get(i).getRsvpStatus().equals("In")) {
-					sumRsvpDotKidsCount = sumRsvpDotKidsCount + rsvpList.get(i).getKidCount(); 
+					aggKidsCount = aggKidsCount + rsvpList.get(i).getKidCount(); 
 				} else {
-					sumRsvpDotKidsCount = sumRsvpDotKidsCount + 0; 
+					aggKidsCount = aggKidsCount + 0; 
 				}
 				
 				if ( rsvpList.get(i).getRsvpStatus().equals("In")) {
-					sumRsvpDotAdultsCount = sumRsvpDotAdultsCount + rsvpList.get(i).getAdultCount(); 
+					aggAdultsCount = aggAdultsCount + rsvpList.get(i).getAdultCount(); 
 				} else {
-					sumRsvpDotAdultsCount = sumRsvpDotAdultsCount + 0; 
+					aggAdultsCount = aggAdultsCount + 0; 
 				} 
 				
 				if (rsvpList.get(i).getUserMdl().equals(currentUserMdl) )
 				{
 					rsvpExistsCreatedByAuthUser = true; // if there's a a match, set to true.  that's it, that's all you gotta do. 
-					rsvpIdForAuthUser = rsvpList.get(i).getId(); 
+					rsvpIdCreatedByAuthUser = rsvpList.get(i).getId(); 
 				}   
 			}
 			
-			openKidsSpots = playdateObj.getMaxCountKids() - sumRsvpDotKidsCount; 
+			openKidsSpots = playdateObj.getMaxCountKids() - aggKidsCount; 
 			
-			RsvpMdl rsvpObjForAuthUser = rsvpSrv.findById(rsvpIdForAuthUser); 
+			RsvpMdl rsvpObjForAuthUser = rsvpSrv.findById(rsvpIdCreatedByAuthUser); 
 		// end: fun with functions & loops
 		
 		Boolean hasOneOrMoreRsvp = false; // at present, this is being used to show the delete button or not. 
@@ -308,12 +277,12 @@ public class PlaydateCtl {
 		
 		model.addAttribute("playdate", playdateObj);
 		model.addAttribute("rsvpCount", rsvpCount); 
-		model.addAttribute("sumRsvpDotKidsCount", sumRsvpDotKidsCount); 
+		model.addAttribute("aggKidsCount", aggKidsCount); 
 		model.addAttribute("rsvpExistsCreatedByAuthUser", rsvpExistsCreatedByAuthUser);
 		model.addAttribute("rsvpObjForAuthUser", rsvpObjForAuthUser); 
 		model.addAttribute("rsvpList", rsvpList);
 		
-		model.addAttribute("sumRsvpDotAdultsCount", sumRsvpDotAdultsCount); 
+		model.addAttribute("aggAdultsCount", aggAdultsCount); 
 		
 		model.addAttribute("openKidsSpots", openKidsSpots); 
 		

@@ -134,9 +134,9 @@
 											<tbody>
 												<tr>
 													<td>${rsvpCount}</td>
-													<td>${sumRsvpDotAdultsCount}</td>
+													<td>${aggAdultsCount}</td>
 													<td>${playdate.maxCountKids}</td>
-													<td>${sumRsvpDotKidsCount}</td>
+													<td>${aggKidsCount}</td>
 													<td>${openKidsSpots}</td>
 												</tr>
 											</tbody>
