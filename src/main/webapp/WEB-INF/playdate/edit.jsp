@@ -24,37 +24,32 @@
 			    </c:if>
 				<div id="playdateCard" class="card p-3 d-md-flex justify-content-start">
 					<div id="creatorOrganizerTopButton"  class="d-flex justify-content-between">
+						<div id="creatorOrganizer" class="card p-2 border-0">
+							<p class="m-0 text-secondary" style="font-size: 0.8rem;">Created by
+								<c:choose>
+									<c:when test="${playdate.userMdl.id == authUser.id}">
+										you (${playdate.userMdl.userName})
+									</c:when>
+									<c:otherwise>
+										${playdate.userMdl.userName}
+									</c:otherwise>
+								</c:choose> 
+								on 
+								<fmt:formatDate value="${playdate.createdAt}" pattern="EEEE"/>, <fmt:formatDate value="${playdate.createdAt}" pattern="MMMM dd"/>, <fmt:formatDate value="${playdate.createdAt}" pattern="yyyy"/>, <fmt:formatDate value="${playdate.createdAt}" pattern="h:mm a"/>
+							</p>
+							<c:if test="${playdate.userMdl.id == authUser.id}">
+								<p class="m-0 text-secondary">You are the organizer of this event.</p>
+							</c:if>
+						</div> <!-- end creatorOrganizer -->
 						
-						<c:choose>
-							<c:when test="${playdate.createdAt != null}">
-							<div id="creatorOrganizer" class="card p-2 border-0">
-								<p class="m-0 text-secondary" style="font-size: 0.8rem;">Created by
-									<c:choose>
-										<c:when test="${playdate.userMdl.id == authUser.id}">
-											you (${playdate.userMdl.userName})
-										</c:when>
-										<c:otherwise>
-											${playdate.userMdl.userName}
-										</c:otherwise>
-									</c:choose> 
-									on 
-									<fmt:formatDate value="${playdate.createdAt}" pattern="EEEE"/>, <fmt:formatDate value="${playdate.createdAt}" pattern="MMMM dd"/>, <fmt:formatDate value="${playdate.createdAt}" pattern="yyyy"/>, <fmt:formatDate value="${playdate.createdAt}" pattern="h:mm a"/>
-								</p>
-								<c:if test="${playdate.userMdl.id == authUser.id}">
-									<p class="m-0 text-secondary">You are the organizer of this event.</p>
-								</c:if>
-							</div> <!-- end creatorOrganizer -->
-							</c:when>
-							<c:otherwise> 
-							<div></div>
-							</c:otherwise>
-						</c:choose>
-						
-						<a href="/playdate/${playdate.id}"><button class="btn btn-secondary  mb-2">Cancel</button></a>
+						<a href="/playdate/${playdate.id}"><button class="btn btn-secondary mb-2">Cancel</button></a>
 					</div> <!-- end creatorOrganizerTopButton -->
-					<div id="eventDeetsAndRsvpRow" class="row mt-3">
-						<div id="playdateInfoCol" class="col">
-							<form:form action='/playdate/edit' method='post' modelAttribute='playdate'> <!-- begin playdateEditForm -->
+						
+					<form:form action='/playdate/edit' method='post' modelAttribute='playdate'> 
+						
+						<div id="eventDeetsAndRsvpRow" class="row mt-3">
+							<div id="playdateInfoCol" class="col">
+							<%-- <form:form action='/playdate/edit' method='post' modelAttribute='playdate'>  --%>
 								<form:input type="hidden"  path="id" />
 								
 								<div class="form-floating mb-3">
@@ -106,7 +101,7 @@
 								</div> 
 							
 							
-							<div class="form-floating mb-3">
+								<div class="form-floating mb-3">
 									<form:input path="locationAddy" type="text" class="form-control" id="locationAddy" placeholder="locationAddy"/>
 									<form:label path="locationAddy" for="locationAddy">Location Address</form:label>
 									<p class="text-danger"><form:errors path="locationAddy" />
@@ -124,7 +119,72 @@
 									<p class="text-danger"><form:errors path="maxCountKids" />
 								</div>
 								
-								<p>your rsvp info</p>
+<%-- 								<p>your rsvp info</p>
+							
+								<div class="form-floating mb-3">
+									<form:select path="rsvpStatus" class="form-control" id="rsvpStatus" placeholder="rsvpStatus" >
+										<form:option value="In" path="rsvpStatus">In</form:option>
+										<form:option value="Maybe" path="rsvpStatus">Maybe</form:option>
+										<form:option value="Out" path="rsvpStatus">Out</form:option>
+									</form:select>
+									<form:label path="rsvpStatus" for="rsvpStatus">Status</form:label>
+									<p class="text-danger"><form:errors path="rsvpStatus" />
+								</div>
+								
+								<div class="form-floating mb-3">
+									<form:input path="kidCount" type="number" class="form-control" id="kidCount" placeholder="kidCount" min="1" step="1"/>
+									<form:label path="kidCount" for="kidCount"># of Kids</form:label>
+									<p class="text-danger"><form:errors path="kidCount" />
+								</div>
+								
+								<div class="form-floating mb-3">
+									<form:input path="adultCount" type="number" class="form-control" id="adultCount" placeholder="adultCount" min="1" step="1" />
+									<form:label path="adultCount" for="adultCount"># of Adults</form:label>
+									<p class="text-danger"><form:errors path="adultCount" />
+								</div>
+			
+								<div class="form-floating mb-3">
+									<form:textarea path="comment" type="text" class="form-control" id="comment" placeholder="comment" style="height: 10rem;"/>
+									<form:label path="comment" for="comment">Comment</form:label>
+									<p class="text-danger"><form:errors path="comment" />
+								</div> --%>
+								
+								<!-- <div>
+									<button type="submit" class="btn btn-primary">Update</button>
+								</div> --> 
+								
+							<%-- </form:form> <!-- end playdateEditForm --> --%>
+						</div> <!-- end playdateInfoCol -->
+						
+						<div id="rsvpEtcCol" class="col">
+							<!-- <div id="maxSpace" style="display: flex; flex-direction: column; justify-content: space-between;"> this line is just not working -->
+							<div id="rsvpTrackingCard" class="card p-3 d-md-flex justify-content-start mb-3">
+								<p class="m-0 text-secondary text-center">RSVP Tracking</p>
+								<table class="table table-responsive mt-2 table-borderless table-sm">
+									<thead class="table-light align-top">
+										<tr>
+											<th scope="col">RSVPs</th>
+											<th scope="col">RSVPed Adults</th>
+											<th scope="col">Max Kids</th>
+											<th scope="col">RSVPed Kids</th>
+											<th scope="col">Open Spots</th>													
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>${rsvpCount}</td>
+											<td>${sumRsvpDotAdultsCount}</td>
+											<td>${playdate.maxCountKids}</td>
+											<td>${sumRsvpDotKidsCount}</td>
+											<td>${openKidsSpots}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div> <!-- end rsvpTrackingCard -->
+									
+							<div id="rsvpCard" class="card p-3 d-md-flex justify-content-start">
+								<!-- <p>your rsvp info</p> -->
+								<p class="m-0 text-center" style="font-size: 1.25rem;">Your RSVP</p>
 							
 								<div class="form-floating mb-3">
 									<form:select path="rsvpStatus" class="form-control" id="rsvpStatus" placeholder="rsvpStatus" >
@@ -153,120 +213,71 @@
 									<form:label path="comment" for="comment">Comment</form:label>
 									<p class="text-danger"><form:errors path="comment" />
 								</div>
-								
-								<div>
-									<button type="submit" class="btn btn-primary">Update</button>
-								</div> 
-								
-							</form:form> <!-- end playdateEditForm -->
-						</div> <!-- end playdateInfoCol -->
-						
-						<div id="rsvpEtcCol" class="col">
-							<!-- <div id="maxSpace" style="display: flex; flex-direction: column; justify-content: space-between;"> this line is just not working -->
-									<div id="rsvpTrackingCard" class="card p-3 d-md-flex justify-content-start mb-3">
-										<p class="m-0 text-secondary text-center">RSVP Tracking</p>
-										<table class="table table-responsive mt-2 table-borderless table-sm">
-											<thead class="table-light align-top">
-												<tr>
-													<th scope="col">RSVPs</th>
-													<th scope="col">RSVPed Adults</th>
-													<th scope="col">Max Kids</th>
-													<th scope="col">RSVPed Kids</th>
-													<th scope="col">Open Spots</th>													
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<td>${rsvpCount}</td>
-													<td>${sumRsvpDotAdultsCount}</td>
-													<td>${playdate.maxCountKids}</td>
-													<td>${sumRsvpDotKidsCount}</td>
-													<td>${openKidsSpots}</td>
-												</tr>
-											</tbody>
-										</table>
+							<%-- 
+							<c:choose>
+								<c:when test="${rsvpExistsCreatedByAuthUser}">
+									<div class="d-flex justify-content-center">
+										<div class="card p-2 border-0">
+											<p class="m-0 text-secondary" style="font-size: 0.8rem;">
+												You RSVPed on
+												<fmt:formatDate value="${rsvpObjForAuthUser.createdAt}" pattern="EEEE"/>,
+												<fmt:formatDate value="${rsvpObjForAuthUser.createdAt}" pattern="MMMM dd"/>
+												, 
+												<fmt:formatDate value="${rsvpObjForAuthUser.createdAt}" pattern="yyyy"/>, 
+												<fmt:formatDate value="${rsvpObjForAuthUser.createdAt}" pattern="h:mm a"/>
+												</p>
+										</div>
+									</div>
+					
+									<div class="card p-2 m-0 border-0">
+										<p class="m-0 text-secondary" style="font-size: 0.8rem;">Status</p>
+										<p class="m-0">${rsvpObjForAuthUser.rsvpStatus}</p>
+									</div>
+		
+									<div class="card p-2 border-0">
+										<p class="m-0 text-secondary" style="font-size: 0.8rem;"># of Kids</p>
+										<p class="m-0">${rsvpObjForAuthUser.kidCount}</p>
 									</div>
 									
-									<div id="rsvpCard" class="card p-3 d-md-flex justify-content-start">
+									<div class="card p-2 border-0">
+										<p class="m-0 text-secondary" style="font-size: 0.8rem;"># of Adults</p>
+										<p class="m-0">${rsvpObjForAuthUser.adultCount}</p>
+									</div>
 									
-									<c:choose>
-										<c:when test="${rsvpExistsCreatedByAuthUser}">
-											<div class="d-flex justify-content-center">
-												<div class="card p-2 border-0">
-													<p class="m-0 text-secondary" style="font-size: 0.8rem;">
-														You RSVPed on
-														<fmt:formatDate value="${rsvpObjForAuthUser.createdAt}" pattern="EEEE"/>,
-														<fmt:formatDate value="${rsvpObjForAuthUser.createdAt}" pattern="MMMM dd"/>
-														, 
-														<fmt:formatDate value="${rsvpObjForAuthUser.createdAt}" pattern="yyyy"/>, 
-														<fmt:formatDate value="${rsvpObjForAuthUser.createdAt}" pattern="h:mm a"/>
-														</p>
-												</div>
-											</div>
-							
-											<div class="card p-2 m-0 border-0">
-												<p class="m-0 text-secondary" style="font-size: 0.8rem;">Status</p>
-												<p class="m-0">${rsvpObjForAuthUser.rsvpStatus}</p>
-											</div>
-				
-											<div class="card p-2 border-0">
-												<p class="m-0 text-secondary" style="font-size: 0.8rem;"># of Kids</p>
-												<p class="m-0">${rsvpObjForAuthUser.kidCount}</p>
-											</div>
-											
-											<div class="card p-2 border-0">
-												<p class="m-0 text-secondary" style="font-size: 0.8rem;"># of Adults</p>
-												<p class="m-0">${rsvpObjForAuthUser.adultCount}</p>
-											</div>
-											
-											<div class="card p-2 border-0">
-												<p class="m-0 text-secondary" style="font-size: 0.8rem;">Comment</p>
-												<pre class="m-0">${rsvpObjForAuthUser.comment}</pre>
-											</div>
-											
-											<div class="card p-2 border-0 d-md-flex justify-content-center bg-light ">
-												<p class="m-0 text-center text-secondary">Need to update your RSVP?<br>Click Cancel or Update to return to the main playdate screen.</p>
-											</div>
-		
-										</c:when>
-										<c:otherwise>
-											<div class="card p-2 border-0 d-md-flex justify-content-center bg-light ">
-												<p class="m-0 text-center text-secondary">You have not RSVPed for this event yet.<br>You can enter your RSVP once you click Cancel or Update to return to the main playdate screen.</p>
-											</div>
-										</c:otherwise>
-									</c:choose>
-								</div> <!-- end rsvpCard -->
-								
-								<div id="otherActionsCard" class="card mt-3 p-3 d-flex justify-content-end">
-									<c:choose >
-								        <c:when test="${not hasOneOrMoreRsvp}">
-								        	<div class="card p-2 border-0">
-										        <p>Other Actions:</p>
-											</div>
-											<div>
-										        <form action="/playdate/${playdate.id}" method="post">
-												    <input type="hidden" name="_method" value="delete">
-												    <button class="btn btn-danger">Delete this Playdate</button>
-												</form>
-											</div>
-								        </c:when>
-								        <c:otherwise>
-									        <div class="card p-2 border-0">
-									        	<p>This event has rsvp records, so it cannot be deleted.<br>
-									        	It can only be deleted if/when all RSVPS deleted.<br>
-									        	If this event is no longer happening, update the Status to be "Cancelled."</p>
-									        </div>
-								        </c:otherwise>
-								    </c:choose>
-								</div> <!-- end otherActionsCard -->
-							<!-- </div> --> <!-- end maxSpace -->
+									<div class="card p-2 border-0">
+										<p class="m-0 text-secondary" style="font-size: 0.8rem;">Comment</p>
+										<pre class="m-0">${rsvpObjForAuthUser.comment}</pre>
+									</div>
+									
+									<div class="card p-2 border-0 d-md-flex justify-content-center bg-light ">
+										<p class="m-0 text-center text-secondary">Need to update your RSVP?<br>Click Cancel or Update to return to the main playdate screen.</p>
+									</div>
+
+								</c:when>
+								<c:otherwise>
+									<div class="card p-2 border-0 d-md-flex justify-content-center bg-light ">
+										<p class="m-0 text-center text-secondary">You have not RSVPed for this event yet.<br>You can enter your RSVP once you click Cancel or Update to return to the main playdate screen.</p>
+									</div>
+								</c:otherwise>
+							</c:choose>
+ 							--%>
+ 														
+						</div> <!-- end rsvpCard -->
 						</div> <!-- end rsvpEtcCol-->
 					</div> <!-- end eventDeetsAndRsvpRow -->
+					<div id="bottomButtonTray"  class="d-flex justify-content-center">
+						<div>
+							<button type="submit" class="btn btn-primary">Update</button>
+						</div>
+					</div> <!-- end bottomButtonTray -->
+					</form:form> <!-- end playdateEditForm -->
 					<div id="rsvpListRow" class="row m-1">	
-						<p class="text-center m-1" style="font-size: 1.5rem;">Rsvp List</p>
+						<!-- <p class="text-center m-1" style="font-size: 1.5rem;">Rsvp List</p> -->
+						<!-- <p class="m-0 pl-1" style="font-size: 1.5rem;">Rsvp List</p> -->
 						
-							<table class="table table-striped table-hover table-bordered table-responsive mt-2">
-							<thead>
+							<table class="table table-striped table-hover table-responsive mt-2 caption-top">
+							<caption class="text-dark" style="font-size: 1.5rem;">Rsvp List</caption>
+							<thead class="border-top-0">
 								<tr>
 									<th scope="col">Name</th>
 									<th scope="col">Status</th>
@@ -277,9 +288,9 @@
 								</tr>
 							</thead>
 							<tbody>
-								<c:forEach var="record" items="${rsvpList}">
+								<c:forEach var="record" items="${playdateRsvpList}">
 									<tr>
-										<td><a class="text-decoration-none" href="/profile/${record.userMdl.id}">${record.userMdl.userName}</a></td>
+										<td><a class="text-decoration-none" href="/profile/${record.userId}">${record.userName}</a></td>
 										<td>${record.rsvpStatus}</td>
 										<td>${record.kidCount}</td>
 										<td>${record.adultCount}</td>
@@ -288,6 +299,27 @@
 								</c:forEach>
 							</tbody>
 						</table>
+						
+						<div id="otherActionsCard" class="card mt-3 p-3 d-flex justify-content-end">
+							<c:choose >
+						        <c:when test="${not hasOneOrMoreRsvp}">
+						        	<div class="card p-2 border-0">
+								        <p>Other Actions:</p>
+									</div>
+									<div>
+								        <form action="/playdate/${playdate.id}" method="post">
+										    <input type="hidden" name="_method" value="delete">
+										    <button class="btn btn-danger">Delete this Playdate</button>
+										</form>
+									</div>
+						        </c:when>
+						        <c:otherwise>
+							        <!-- <div class="card p-2 border-0"> -->
+							        	<p>Got rsvps. Can't delete.</p>
+							        <!-- </div> -->
+						        </c:otherwise>
+						    </c:choose>
+						</div> <!-- end otherActionsCard -->
 					</div> <!-- end rsvpListRow -->	
 				</div> <!-- end playdateCard -->
 				

@@ -28,12 +28,10 @@
 					        </div>
 					    </c:if>
 						<div id="playdateCard" class="card p-3 d-md-flex justify-content-start">
-							
 							<div id="creationOrganizerButtons" class="d-flex justify-content-between">
 								
-								<div class="card p-2 border-0">
-									<p class="m-0 text-secondary" style="font-size: 0.8rem;">
-										Created by 
+								<div id="creatorOrganizer" class="card p-2 border-0">
+									<p class="m-0 text-secondary" style="font-size: 0.8rem;">Created by 
 										<c:choose>
 											<c:when test="${playdate.userMdl.id == authUser.id}">
 											you (${playdate.userMdl.userName})
@@ -61,7 +59,6 @@
 							</div> <!-- end creationOrganizerButtons -->
 							
 							<div class="row mt-3">
-								
 								<div id="playdateInfoCol" class="col">
 									<!-- <div id="playdateInfoCard" class="card p-3 d-md-flex justify-content-start"> -->
 									
@@ -116,29 +113,7 @@
 										<div class="card p-2 border-0">
 											<p class="m-0 text-secondary" style="font-size: 0.8rem;">Description</p>
 											<pre style="white-space: pre-wrap">${playdate.eventDescription}</pre>
-										</div>	
-										
-										<p>your rsvp info</p>
-										
-										<div class="card p-2 border-0">
-											<p class="m-0 text-secondary" style="font-size: 0.8rem;">rsvpStatus</p>
-											<p class="m-0">${playdate.rsvpStatus}</p>
-										</div>
-										
-										<div class="card p-2 m-0 border-0">
-											<p class="m-0 text-secondary" style="font-size: 0.8rem;">kidCount</p>
-											<p class="m-0">${playdate.kidCount}</p>
-										</div>
-										
-										<div class="card p-2 m-0 border-0">
-											<p class="m-0 text-secondary" style="font-size: 0.8rem;">adultCount</p>
-											<p class="m-0">${playdate.adultCount}</p>
-										</div>									
-										
-										<div class="card p-2 m-0 border-0">
-											<p class="m-0 text-secondary" style="font-size: 0.8rem;">comment</p>
-											<p class="m-0">${playdate.comment}</p>
-										</div>									
+										</div>						
 										
 									<!-- </div>  --><!-- end playdateInfoCard -->
 								</div> <!-- end col -->
@@ -171,9 +146,32 @@
 									<div id="rsvpCard" class="card p-3 d-md-flex justify-content-start">
 									
 									<c:choose>
+										<c:when test="${authUser.id == playdate.userMdl.id}">
+											<p class="m-0 text-center" style="font-size: 1.25rem;">Your RSVP</p>
+											<div class="card p-2 m-0 border-0">
+												<p class="m-0 text-secondary" style="font-size: 0.8rem;">Status</p>
+												<p class="m-0">${playdate.rsvpStatus}</p>
+											</div>
+				
+											<div class="card p-2 border-0">
+												<p class="m-0 text-secondary" style="font-size: 0.8rem;"># of Kids</p>
+												<p class="m-0">${playdate.kidCount}</p>
+											</div>
+											
+											<div class="card p-2 border-0">
+												<p class="m-0 text-secondary" style="font-size: 0.8rem;"># of Adults</p>
+												<p class="m-0">${playdate.adultCount}</p>
+											</div>
+											
+											<div class="card p-2 border-0">
+												<p class="m-0 text-secondary" style="font-size: 0.8rem;">Comment</p>
+												<pre style="white-space: pre-wrap"class="m-0">${playdate.comment}</pre>
+											</div>
+										</c:when>
 										<c:when test="${rsvpExistsCreatedByAuthUser}">
-											<div class="d-flex justify-content-between">
-												<div class="card p-2 border-0">
+											<!-- <div class="d-flex justify-content-end"> -->
+											<div class="row">
+												<%-- <div class="card p-2 border-0">
 													<p class="m-0 text-secondary" style="font-size: 0.8rem;">
 														You RSVPed on
 														<fmt:formatDate value="${rsvpObjForAuthUser.createdAt}" pattern="EEEE"/>,
@@ -182,9 +180,15 @@
 														<fmt:formatDate value="${rsvpObjForAuthUser.createdAt}" pattern="yyyy"/>, 
 														<fmt:formatDate value="${rsvpObjForAuthUser.createdAt}" pattern="h:mm a"/>
 														</p>
+												</div> --%>
+												<div class="col"></div>
+												<div class="col">
+													<p class="m-0 text-center" style="font-size: 1.25rem;">Your RSVP</p>
 												</div>
 												
-												<a href= "/rsvp/${rsvpObjForAuthUser.id}/edit"><button class="btn btn-primary mb-2">Edit Rsvp</button></a>
+												<div class="col d-flex justify-content-end">
+													<a href= "/rsvp/${rsvpObjForAuthUser.id}/edit"><button class="btn btn-primary mb-2">Edit</button></a>
+												</div>
 											</div>
 							
 											<div class="card p-2 m-0 border-0">
@@ -205,6 +209,17 @@
 											<div class="card p-2 border-0">
 												<p class="m-0 text-secondary" style="font-size: 0.8rem;">Comment</p>
 												<pre style="white-space: pre-wrap"class="m-0">${rsvpObjForAuthUser.comment}</pre>
+											</div>
+											
+											<div class="card p-2 border-0">
+												<p class="m-0 text-secondary" style="font-size: 0.8rem;">
+													You RSVPed on
+													<fmt:formatDate value="${rsvpObjForAuthUser.createdAt}" pattern="EEEE"/>,
+													<fmt:formatDate value="${rsvpObjForAuthUser.createdAt}" pattern="MMMM dd"/>
+													, 
+													<fmt:formatDate value="${rsvpObjForAuthUser.createdAt}" pattern="yyyy"/>, 
+													<fmt:formatDate value="${rsvpObjForAuthUser.createdAt}" pattern="h:mm a"/>
+													</p>
 											</div>
 
 										</c:when>
@@ -254,43 +269,16 @@
 									</div> <!-- end rsvpCard -->
 								</div> <!-- end col -->
 							</div> <!-- end row -->
+						
 							
 							<div id="rsvpListRow" class="row m-1">	
-								<p class="text-center m-1" style="font-size: 1.5rem;">Rsvp List</p>
+								<!-- <p class="text-center m-1" style="font-size: 1.5rem;">Rsvp List</p> -->
 								
-	 							<table class="table table-striped table-hover table-bordered table-responsive mt-2">
-									<thead>
+	 							<table class="table table-striped table-hover table-responsive mt-2 caption-top">
+									<caption class="text-dark" style="font-size: 1.5rem;">Rsvp List</caption>
+									<%-- <caption class="text-dark" >Rsvp List</caption> --%>
+									<thead class="border-top-0">
 										<tr>
-											<th scope="col">Name</th>
-											<th scope="col">Status</th>
-											<th scope="col"># of Kids</th>
-											<th scope="col"># of Adults</th>
-											<th scope="col">Comment</th>
-											
-										</tr>
-									</thead>
-									<tbody>
-										<c:forEach var="record" items="${rsvpList}">
-											<tr>
-												<td><a class="text-decoration-none" href="/profile/${record.userMdl.id}">${record.userMdl.userName}</a></td>
-												<td>${record.rsvpStatus}</td>
-												<td>${record.kidCount}</td>
-												<td>${record.adultCount}</td>
-												<td><pre style="white-space: pre-wrap"class="m-0">${record.comment}</pre></td>
-											</tr>
-										</c:forEach>
-									</tbody>
-								</table>
-		
-							</div> <!-- end rsvpListRow -->
-							
-							<div id="rsvpListRow" class="row m-1">	
-								<p class="text-center m-1" style="font-size: 1.5rem;">Rsvp List NEW</p>
-								
-	 							<table class="table table-striped table-hover table-bordered table-responsive mt-2">
-									<thead>
-										<tr>
-											<th scope="col">firstName</th> 
 											<th scope="col">Name</th> 
 											<th scope="col">Status</th>
 											<th scope="col"># of Kids</th>
@@ -301,16 +289,7 @@
 									</thead>
 									<tbody>
 										<c:forEach var="record" items="${playdateRsvpList}">
-											<%-- <tr>
-												<td>${record[0]}</td>
-												<td><a class="text-decoration-none" href="/profile/${record[5]}">${record[0]}</a></td>
-												<td>${record[3]}</td>
-												<td>${record[1]}</td>
-												<td>${record[2]}</td>
-												<td><pre style="white-space: pre-wrap"class="m-0">${record[4]}</pre></td> 
-											</tr> --%>
 											<tr>
-												<td>${record.firstName}</td>
 												<td><a class="text-decoration-none" href="/profile/${record.userId}">${record.userName}</a></td>
 												<td>${record.rsvpStatus}</td>
 												<td>${record.kidCount}</td>
