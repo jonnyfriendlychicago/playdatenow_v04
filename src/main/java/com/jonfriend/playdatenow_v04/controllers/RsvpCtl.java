@@ -1,5 +1,6 @@
 package com.jonfriend.playdatenow_v04.controllers;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -82,15 +83,13 @@ public class RsvpCtl {
 			
 			// sending the parent record to the page
 			model.addAttribute("playdate", playdateObj);
-			
-//			return "rsvp/create.jsp";
 			return "playdate/record.jsp";
 		} else {
 			
 			// first... get current user whole object, for infusion into rsvp record
 			UserMdl currentUserMdl = userSrv.findById(authenticatedUserId); 
 			
-			// first, instantiate the new object
+			// next, instantiate the new object
 			RsvpMdl newOtc = new RsvpMdl(); // ... and next: infuse into that object all the values from the incoming model/form
 			newOtc.setPlaydateMdl(playdateObj); // parent record
 			newOtc.setUserMdl(currentUserMdl); // user that is creating it
@@ -129,9 +128,11 @@ public class RsvpCtl {
 //	}
 
 	// display edit page
-	@GetMapping("rsvp/{rsvpId}/edit")
+//	@GetMapping("rsvp/{rsvpId}/edit")
+	@GetMapping("playdate/{playdateId}/rsvp/{rsvpId}/edit")
 	public String editRsvp(
-			@PathVariable("rsvpId") Long rsvpId
+			@PathVariable("playdateId") Long playdateId
+			, @PathVariable("rsvpId") Long rsvpId
 			, Model model
 			, HttpSession session
 			) {
@@ -141,69 +142,103 @@ public class RsvpCtl {
 		Long authenticatedUserId = (Long) session.getAttribute("userId");
 		model.addAttribute("authUser", userSrv.findById(authenticatedUserId));
 		
-		UserMdl currentUserMdl = userSrv.findById(authenticatedUserId); // used for show/not edit button
 		RsvpMdl rsvpObj = rsvpSrv.findById(rsvpId); // get the object that is the primary object displayed on this page
-		PlaydateMdl playdateObj = rsvpObj.getPlaydateMdl(); // get the object that is the parent to the primary object
-		List<RsvpMdl> rsvpList = rsvpSrv.returnAllRsvpForPlaydate(playdateObj);
-		
-		// start: fun with functions & loops
-			Integer rsvpCount = rsvpList.size(); // get a count of how many items in the list
-			Integer sumRsvpDotKidsCount = 0; // instantiate the java variable that we will update in the loop 
-			Boolean rsvpExistsCreatedByAuthUser = false; // instantiate the java variable that we will update in the loop
-			
-			Long rsvpIdForAuthUser = (long) 0; 
-			
-			Integer sumRsvpDotAdultsCount = 0; // instantiate the java variable that we will update in the loop
-			Integer openKidsSpots = 0; // instantiate the java variable that we will update in the loop
-			
-			for (int i=0; i < rsvpCount; i++  ) {
-				System.out.println("RSVP #" + i +  " (" + rsvpList.get(i).getUserMdl().getUserName() + "): " + rsvpList.get(i).getKidCount() + " (" + rsvpList.get(i).getRsvpStatus() + ")"  ); 
-				
-	//			sumRsvpDotKidsCount += rsvpList.get(i).getKidCount();
-				// JRF: line above replaced by if/else below.   let's see how it goes
-				if ( rsvpList.get(i).getRsvpStatus().equals("In")) {
-					sumRsvpDotKidsCount = sumRsvpDotKidsCount + rsvpList.get(i).getKidCount(); 
-				} else {
-					sumRsvpDotKidsCount = sumRsvpDotKidsCount + 0; 
-				}
-				
-				if ( rsvpList.get(i).getRsvpStatus().equals("In")) {
-					sumRsvpDotAdultsCount = sumRsvpDotAdultsCount + rsvpList.get(i).getAdultCount(); 
-				} else {
-					sumRsvpDotAdultsCount = sumRsvpDotAdultsCount + 0; 
-				} 
-				
-				if (rsvpList.get(i).getUserMdl().equals(currentUserMdl) )
-				{
-					rsvpExistsCreatedByAuthUser = true; // if there's a a match, set to true.  that's it, that's all you gotta do. 
-					rsvpIdForAuthUser = rsvpList.get(i).getId(); 
-				}   
-			}
-			
-			openKidsSpots = playdateObj.getMaxCountKids() - sumRsvpDotKidsCount;
-			
-			RsvpMdl rsvpObjForAuthUser = rsvpSrv.findById(rsvpIdForAuthUser); 
-		// end: fun with functions & loops
-		
-		model.addAttribute("playdate", playdateObj);   // deliver the object that is the parent to the primary object on this page
-		model.addAttribute("rsvpCount", rsvpCount); 
-		model.addAttribute("sumRsvpDotKidsCount", sumRsvpDotKidsCount); 
-		model.addAttribute("rsvpExistsCreatedByAuthUser", rsvpExistsCreatedByAuthUser);
-		model.addAttribute("rsvpObjForAuthUser", rsvpObjForAuthUser); 
 		model.addAttribute("rsvp", rsvpObj); // deliver the object that is the primary object on this page
+		PlaydateMdl playdateObj = rsvpObj.getPlaydateMdl(); // get the object that is the parent to the primary object, for all downstream functions
+		
+		// get/deliver from playdate db record, Part 1 (so they can be addAtts that are independent from the playdate obj)
+		Date playdateCreatedAt = playdateObj.getCreatedAt(); 
+		Long playdateCreatedById = playdateObj.getUserMdl().getId();
+		String playdateCreatedByUserName = playdateObj.getUserMdl().getUserName();
+		
+		// begin: calculate various RSVP-related stats.  NOTE: this all could be done with native queries as well, but this is good function/loop practice.  
+		List<RsvpMdl> rsvpList = rsvpSrv.returnAllRsvpForPlaydate(playdateObj); // list of rsvps, which we will use downstream
+		Integer rsvpCount = 0; 							// instantiate the java variable that we will update in the loop
+		Integer aggKidsCount = 0; 						// instantiate the java variable that we will update in the loop 
+		Integer aggAdultsCount = 0; 					// instantiate the java variable that we will update in the loop
+//		Boolean rsvpExistsCreatedByAuthUser = false; 	// not needed; inherent with the method
+		Integer openKidsSpots = 0; 						// instantiate the java variable that we will update in the loop
+		
+		for (int i=0; i < rsvpList.size(); i++  ) { 	// for each record in the list of RSVPs... 
+			if ( rsvpList.get(i).getRsvpStatus().equals("In")) { // we only count the 'in' records towards totals
+				rsvpCount += 1;  
+				aggKidsCount += rsvpList.get(i).getKidCount();
+				aggAdultsCount += rsvpList.get(i).getAdultCount(); 
+			} 
+			// in constrast to playdate controllers, no 'if' clause needed for tagging rsvp record to be displayed; 
+		}
+		
+		if (playdateObj.getRsvpStatus().equals("In")) { // this 'if' accounts for the host family
+			rsvpCount += 1;  
+			aggKidsCount += playdateObj.getKidCount(); 
+			aggAdultsCount += playdateObj.getAdultCount(); 				
+		}
+		
+		openKidsSpots = playdateObj.getMaxCountKids() - aggKidsCount; 
+
+		model.addAttribute("playdate", playdateObj);
+		model.addAttribute("rsvpCount", rsvpCount); 
+		model.addAttribute("aggKidsCount", aggKidsCount); 
 		model.addAttribute("rsvpList", rsvpList);
-		model.addAttribute("sumRsvpDotAdultsCount", sumRsvpDotAdultsCount); 
-		
+		model.addAttribute("aggAdultsCount", aggAdultsCount); 
 		model.addAttribute("openKidsSpots", openKidsSpots); 
+		// end: calculate various RSVP-related stats.  
 		
-		// getting RSVP list to look like other playdate mgmt pages
-		Long playdateId = playdateObj.getId(); 
 		// get/deliver list of unioned rsvp records
 		List<PlaydateUserUnionRsvpUser> playdateRsvpList = rsvpSrv.playdateRsvpList(playdateId);
 		model.addAttribute("playdateRsvpList", playdateRsvpList);  
 		
+		// get/deliver from playdate db record, Part 2 (so they can be addAtts that are independent from the playdate obj)
+		model.addAttribute("playdateCreatedAt", playdateCreatedAt); 
+		model.addAttribute("playdateCreatedById", playdateCreatedById);
+		model.addAttribute("playdateCreatedByUserName", playdateCreatedByUserName);
 
 		return "rsvp/edit.jsp";
+
+		
+//start: fun with functions & loops
+//			List<RsvpMdl> rsvpList = rsvpSrv.returnAllRsvpForPlaydate(playdateObj);
+//			Integer rsvpCount = rsvpList.size(); // get a count of how many items in the list
+//			Integer sumRsvpDotKidsCount = 0; // instantiate the java variable that we will update in the loop 
+//			Boolean rsvpExistsCreatedByAuthUser = false; // instantiate the java variable that we will update in the loop
+//			Long rsvpIdForAuthUser = (long) 0; 
+//			Integer sumRsvpDotAdultsCount = 0; // instantiate the java variable that we will update in the loop
+//			Integer openKidsSpots = 0; // instantiate the java variable that we will update in the loop
+//			for (int i=0; i < rsvpCount; i++  ) {
+//				System.out.println("RSVP #" + i +  " (" + rsvpList.get(i).getUserMdl().getUserName() + "): " + rsvpList.get(i).getKidCount() + " (" + rsvpList.get(i).getRsvpStatus() + ")"  ); 
+//				
+//	//			sumRsvpDotKidsCount += rsvpList.get(i).getKidCount();
+//				// JRF: line above replaced by if/else below.   let's see how it goes
+//				if ( rsvpList.get(i).getRsvpStatus().equals("In")) {
+//					sumRsvpDotKidsCount = sumRsvpDotKidsCount + rsvpList.get(i).getKidCount(); 
+//				} else {
+//					sumRsvpDotKidsCount = sumRsvpDotKidsCount + 0; 
+//				}
+//				if ( rsvpList.get(i).getRsvpStatus().equals("In")) {
+//					sumRsvpDotAdultsCount = sumRsvpDotAdultsCount + rsvpList.get(i).getAdultCount(); 
+//				} else {
+//					sumRsvpDotAdultsCount = sumRsvpDotAdultsCount + 0; 
+//				} 
+//				if (rsvpList.get(i).getUserMdl().equals(currentUserMdl) )
+//				{
+//					rsvpExistsCreatedByAuthUser = true; // if there's a a match, set to true.  that's it, that's all you gotta do. 
+//					rsvpIdForAuthUser = rsvpList.get(i).getId(); 
+//				}   
+//			}
+//			openKidsSpots = playdateObj.getMaxCountKids() - sumRsvpDotKidsCount;
+//			RsvpMdl rsvpObjForAuthUser = rsvpSrv.findById(rsvpIdForAuthUser); 
+		// end: fun with functions & loops
+//		model.addAttribute("playdate", playdateObj);   // deliver the object that is the parent to the primary object on this page
+//		model.addAttribute("rsvpCount", rsvpCount); 
+//		model.addAttribute("sumRsvpDotKidsCount", sumRsvpDotKidsCount); 
+//		model.addAttribute("rsvpExistsCreatedByAuthUser", rsvpExistsCreatedByAuthUser);
+//		model.addAttribute("rsvpObjForAuthUser", rsvpObjForAuthUser); 
+//		model.addAttribute("rsvp", rsvpObj); // deliver the object that is the primary object on this page
+//		model.addAttribute("rsvpList", rsvpList);
+//		model.addAttribute("sumRsvpDotAdultsCount", sumRsvpDotAdultsCount); 
+		
+//		model.addAttribute("openKidsSpots", openKidsSpots); 
+		
 	}
 	
 	// process the edit
@@ -221,18 +256,17 @@ public class RsvpCtl {
 		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
 		Long authenticatedUserId = (Long) session.getAttribute("userId");
 		model.addAttribute("authUser", userSrv.findById(authenticatedUserId));
-		
-		// below now setting up rthe rsvp object by using the getID on the modAtt thing. 
-		RsvpMdl rsvpObj = rsvpSrv.findById(rsvpMdl.getId());
+		UserMdl currentUserMdl = userSrv.findById(authenticatedUserId); //  gets the userModel object by calling the user service with the session user id
+		 
+		RsvpMdl rsvpObj = rsvpSrv.findById(rsvpMdl.getId()); // below now setting up rthe rsvp object by using the getID on the modAtt thing.
 		PlaydateMdl playdateObj = rsvpObj.getPlaydateMdl(); // get the object that is the parent to the primary object
 		
 //		Long rsvpID = rsvpObj.getId(); 
 		Long playdateId = playdateObj.getId(); 
 		
-		UserMdl currentUserMdl = userSrv.findById(authenticatedUserId); //  gets the userModel object by calling the user service with the session user id
 		UserMdl rsvpCreatorUserMdl = rsvpObj.getUserMdl();   // gets the userMdl obj saved to the existing playdateObj
 		
-		List<RsvpMdl> rsvpList = rsvpSrv.returnAllRsvpForPlaydate(playdateObj); // 812
+//		List<RsvpMdl> rsvpList = rsvpSrv.returnAllRsvpForPlaydate(playdateObj); // 812
 		
 		if(!currentUserMdl.equals(rsvpCreatorUserMdl)) {
 			redirectAttributes.addFlashAttribute("permissionErrorMsg", "That RSVP can only be edited by its creator.  Any edits just attempted were discarded.");
@@ -241,53 +275,101 @@ public class RsvpCtl {
 		
 		if(result.hasErrors()) {
 			
-			// start: fun with functions & loops
-				Integer rsvpCount = rsvpList.size(); // get a count of how many items in the list
-				Integer sumRsvpDotKidsCount = 0; // instantiate the java variable that we will update in the loop 
-				Boolean rsvpExistsCreatedByAuthUser = false; // instantiate the java variable that we will update in the loop
-				
-				Long rsvpIdForAuthUser = (long) 0; 
-				
-				for (int i=0; i < rsvpCount; i++  ) {
-					System.out.println("RSVP #" + i +  " (" + rsvpList.get(i).getUserMdl().getUserName() + "): " + rsvpList.get(i).getKidCount() + " (" + rsvpList.get(i).getRsvpStatus() + ")"  ); 
-					
-	//				sumRsvpDotKidsCount += rsvpList.get(i).getKidCount();
-					// JRF: line above replaced by if/else below.   let's see how it goes
-					if ( rsvpList.get(i).getRsvpStatus().equals("In")) {
-						sumRsvpDotKidsCount = sumRsvpDotKidsCount + rsvpList.get(i).getKidCount(); 
-					} else {
-						sumRsvpDotKidsCount = sumRsvpDotKidsCount + 0; 
-					}
-					
-					System.out.println("sum: " + sumRsvpDotKidsCount); 
-					
-					if (rsvpList.get(i).getUserMdl().equals(currentUserMdl) )
-					{
-						rsvpExistsCreatedByAuthUser = true; // if there's a a match, set to true.  that's it, that's all you gotta do. 
-						rsvpIdForAuthUser = rsvpList.get(i).getId(); 
-					}   
-				}
-				
-//				RsvpMdl rsvpObjForAuthUser = rsvpSrv.findById(rsvpIdForAuthUser); 
-			// end: fun with functions & loops
+//			// start: fun with functions & loops
+//				Integer rsvpCount = rsvpList.size(); // get a count of how many items in the list
+//				Integer sumRsvpDotKidsCount = 0; // instantiate the java variable that we will update in the loop 
+//				Boolean rsvpExistsCreatedByAuthUser = false; // instantiate the java variable that we will update in the loop
+//				
+//				Long rsvpIdForAuthUser = (long) 0; 
+//				
+//				for (int i=0; i < rsvpCount; i++  ) {
+//					System.out.println("RSVP #" + i +  " (" + rsvpList.get(i).getUserMdl().getUserName() + "): " + rsvpList.get(i).getKidCount() + " (" + rsvpList.get(i).getRsvpStatus() + ")"  ); 
+//					
+//	//				sumRsvpDotKidsCount += rsvpList.get(i).getKidCount();
+//					// JRF: line above replaced by if/else below.   let's see how it goes
+//					if ( rsvpList.get(i).getRsvpStatus().equals("In")) {
+//						sumRsvpDotKidsCount = sumRsvpDotKidsCount + rsvpList.get(i).getKidCount(); 
+//					} else {
+//						sumRsvpDotKidsCount = sumRsvpDotKidsCount + 0; 
+//					}
+//					
+//					System.out.println("sum: " + sumRsvpDotKidsCount); 
+//					
+//					if (rsvpList.get(i).getUserMdl().equals(currentUserMdl) )
+//					{
+//						rsvpExistsCreatedByAuthUser = true; // if there's a a match, set to true.  that's it, that's all you gotta do. 
+//						rsvpIdForAuthUser = rsvpList.get(i).getId(); 
+//					}   
+//				}
+//				
+////				RsvpMdl rsvpObjForAuthUser = rsvpSrv.findById(rsvpIdForAuthUser); 
+//			// end: fun with functions & loops
+//			
+//			model.addAttribute("playdate", playdateObj);   // deliver the object that is the parent to the primary object on this page
+//			model.addAttribute("rsvpCount", rsvpCount); 
+//			model.addAttribute("sumRsvpDotKidsCount", sumRsvpDotKidsCount); 
+//			model.addAttribute("rsvpExistsCreatedByAuthUser", rsvpExistsCreatedByAuthUser);
+////			model.addAttribute("rsvpObjForAuthUser", rsvpObjForAuthUser); 
+////			model.addAttribute("rsvp", rsvpObj); // deliver the object that is the primary object on this page
+//			model.addAttribute("rsvpList", rsvpList);
+//			// sending the parent record to the page
+//
+//			return "rsvp/edit.jsp";
 			
-			model.addAttribute("playdate", playdateObj);   // deliver the object that is the parent to the primary object on this page
-			model.addAttribute("rsvpCount", rsvpCount); 
-			model.addAttribute("sumRsvpDotKidsCount", sumRsvpDotKidsCount); 
-			model.addAttribute("rsvpExistsCreatedByAuthUser", rsvpExistsCreatedByAuthUser);
-//			model.addAttribute("rsvpObjForAuthUser", rsvpObjForAuthUser); 
+//			RsvpMdl rsvpObj = rsvpSrv.findById(rsvpId); // get the object that is the primary object displayed on this page
 //			model.addAttribute("rsvp", rsvpObj); // deliver the object that is the primary object on this page
+//			PlaydateMdl playdateObj = rsvpObj.getPlaydateMdl(); // get the object that is the parent to the primary object, for all downstream functions
+			
+			// get/deliver from playdate db record, Part 1 (so they can be addAtts that are independent from the playdate obj)
+			Date playdateCreatedAt = playdateObj.getCreatedAt(); 
+			Long playdateCreatedById = playdateObj.getUserMdl().getId();
+			String playdateCreatedByUserName = playdateObj.getUserMdl().getUserName();
+			
+			// begin: calculate various RSVP-related stats.  NOTE: this all could be done with native queries as well, but this is good function/loop practice.  
+			List<RsvpMdl> rsvpList = rsvpSrv.returnAllRsvpForPlaydate(playdateObj); // list of rsvps, which we will use downstream
+			Integer rsvpCount = 0; 							// instantiate the java variable that we will update in the loop
+			Integer aggKidsCount = 0; 						// instantiate the java variable that we will update in the loop 
+			Integer aggAdultsCount = 0; 					// instantiate the java variable that we will update in the loop
+//			Boolean rsvpExistsCreatedByAuthUser = false; 	// not needed; inherent with the method
+			Integer openKidsSpots = 0; 						// instantiate the java variable that we will update in the loop
+			
+			for (int i=0; i < rsvpList.size(); i++  ) { 	// for each record in the list of RSVPs... 
+				if ( rsvpList.get(i).getRsvpStatus().equals("In")) { // we only count the 'in' records towards totals
+					rsvpCount += 1;  
+					aggKidsCount += rsvpList.get(i).getKidCount();
+					aggAdultsCount += rsvpList.get(i).getAdultCount(); 
+				} 
+				// in constrast to playdate controllers, no 'if' clause needed for tagging rsvp record to be displayed; 
+			}
+			
+			if (playdateObj.getRsvpStatus().equals("In")) { // this 'if' accounts for the host family
+				rsvpCount += 1;  
+				aggKidsCount += playdateObj.getKidCount(); 
+				aggAdultsCount += playdateObj.getAdultCount(); 				
+			}
+			
+			openKidsSpots = playdateObj.getMaxCountKids() - aggKidsCount; 
+
+			model.addAttribute("playdate", playdateObj);
+			model.addAttribute("rsvpCount", rsvpCount); 
+			model.addAttribute("aggKidsCount", aggKidsCount); 
 			model.addAttribute("rsvpList", rsvpList);
-			// sending the parent record to the page
-
+			model.addAttribute("aggAdultsCount", aggAdultsCount); 
+			model.addAttribute("openKidsSpots", openKidsSpots); 
+			// end: calculate various RSVP-related stats.  
 			
-//			return "rsvp/create.jsp";
-			return "rsvp/edit.jsp";
+			// get/deliver list of unioned rsvp records
+			List<PlaydateUserUnionRsvpUser> playdateRsvpList = rsvpSrv.playdateRsvpList(playdateId);
+			model.addAttribute("playdateRsvpList", playdateRsvpList);  
+			
+			// get/deliver from playdate db record, Part 2 (so they can be addAtts that are independent from the playdate obj)
+			model.addAttribute("playdateCreatedAt", playdateCreatedAt); 
+			model.addAttribute("playdateCreatedById", playdateCreatedById);
+			model.addAttribute("playdateCreatedByUserName", playdateCreatedByUserName);
+			return "rsvp/edit.jsp"; // not sure if/how it is advisable to have this return/redirect/whatev to the url that contains the playdate_id and rsvp_id
+			
 		} else {
-			
-			// actually, get the user object that created it in the first place, that's what we want to maintain
-			UserMdl origCreatorUserMdl = rsvpObj.getUserMdl();  // get the object that is the parent to the primary object
-
+			UserMdl origCreatorUserMdl = rsvpObj.getUserMdl();  // get the user object that created it in the first place, that's what we want to maintain
 			rsvpMdl.setUserMdl( origCreatorUserMdl);
 			rsvpMdl.setPlaydateMdl(playdateObj); 
 			rsvpSrv.update(rsvpMdl);
@@ -295,8 +377,6 @@ public class RsvpCtl {
 //			return "redirect:/playdate/" + playdateId + "/rsvp";
 //			return "redirect:/rsvp/" + rsvpID;
 			return "redirect:/playdate/" + playdateId;
-			
-			
 		}
 	} 
 	

@@ -41,11 +41,7 @@
 											</c:otherwise>
 										</c:choose>
 										on 
-										<fmt:formatDate value="${playdate.createdAt}" pattern="EEEE"/>,
-										<fmt:formatDate value="${playdate.createdAt}" pattern="MMMM dd"/>
-										, 
-										<fmt:formatDate value="${playdate.createdAt}" pattern="yyyy"/>, 
-										<fmt:formatDate value="${playdate.createdAt}" pattern="h:mm a"/>
+										<fmt:formatDate value="${playdate.createdAt}" pattern="EEEE"/>, <fmt:formatDate value="${playdate.createdAt}" pattern="MMMM dd"/>, <fmt:formatDate value="${playdate.createdAt}" pattern="yyyy"/>, <fmt:formatDate value="${playdate.createdAt}" pattern="h:mm a"/>
 									</p>
 									<c:if test="${playdate.userMdl.id == authUser.id}">
 										<p class="m-0 text-secondary">You are the organizer of this event.</p>
@@ -128,7 +124,7 @@
 													<th scope="col">RSVPed Adults</th>
 													<th scope="col">Max Kids</th>
 													<th scope="col">RSVPed Kids</th>
-													<th scope="col">Open Spots</th>													
+													<th scope="col">Open Kid Spots</th>													
 												</tr>
 											</thead>
 											<tbody>
@@ -187,7 +183,8 @@
 												</div>
 												
 												<div class="col d-flex justify-content-end">
-													<a href= "/rsvp/${rsvpObjForAuthUser.id}/edit"><button class="btn btn-primary mb-2">Edit</button></a>
+													<%-- <a href= "/rsvp/${rsvpObjForAuthUser.id}/edit"><button class="btn btn-primary mb-2">Edit</button></a> --%>
+													<a href= "/playdate/${playdate.id}/rsvp/${rsvpObjForAuthUser.id}/edit"><button class="btn btn-primary mb-2">Edit</button></a>
 												</div>
 											</div>
 							
