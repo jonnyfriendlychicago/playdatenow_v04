@@ -2,7 +2,6 @@ package com.jonfriend.playdatenow_v04.services;
 
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.stereotype.Service;
 import com.jonfriend.playdatenow_v04.models.PlaydateMdl;
 import com.jonfriend.playdatenow_v04.repositories.PlaydateRpo;
@@ -45,18 +44,6 @@ public class PlaydateSrv {
 		return playdateRpo.findAll();
 	}
 	
-	 // new, all of below
-//	public List<PlaydateMdl> listAll(String keyword) {
-//        if (keyword != null) {
-//            return playdateRpo.search(keyword);
-//        }
-//        return playdateRpo.findAll();
-//    }
-	
-	public List<PlaydateMdl> filteredReturn() {
-		return playdateRpo.search(); 
-	}
-	
 	public List<PlaydateMdl> userHostedPlaydateListCurrentPlus(Long x) {
 		return playdateRpo.userHostedPlaydateListCurrentPlus(x); 
 	}
@@ -65,11 +52,5 @@ public class PlaydateSrv {
 		return playdateRpo.userHostedPlaydateListPast(x); 
 	}
 	
-
-	
-//	public List<PlaydateMdl> returnMyFutureEventList(Long x) {
-//		return playdateRpo.CreatorList(x);
-//	}
-	
-	
+// end srv
 }

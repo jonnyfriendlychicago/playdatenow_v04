@@ -19,6 +19,5 @@ public interface UserRpo extends CrudRepository<UserMdl, Long> {
     
     UserMdl findByIdIs(Long id);
     
-    
-    // end of rpo   
+// end rpo   
 }

@@ -11,7 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -50,14 +49,8 @@ public class IndexhomeprofileCtl {
 			Model model
 			, HttpSession session) {
 		
-		// *** Redirect authorized users to the /home METHOD -- DON'T EXPOSE REG/LOGIN index page TO ALREADY AUTH'ED USERS ***
-		if(session.getAttribute("userId") != null) {return "redirect:/home";}
-
-		 
+		if(session.getAttribute("userId") != null) {return "redirect:/home";} // *** Redirect authorized users to the /home METHOD -- DON'T EXPOSE REG/LOGIN index page TO ALREADY AUTH'ED USERS ***
 		model.addAttribute("newLogin", new LoginUserMdl()); // putting a new empty LoginUserMdl obj on the index page,
-//        model.addAttribute("newUser", new UserMdl());  // login no longer on the same page as register
-        
-        System.out.println("Page Display: login"); 
 		return "index.jsp"; 
 	}
  
@@ -79,7 +72,6 @@ public class IndexhomeprofileCtl {
         }
     
         session.setAttribute("userId", user.getId()); // No errors?  Store the ID from the DB in session.
-//	    return "redirect:/home";
 	    return "redirect:/playdate"; // redirecting here to playdate for now, b/c insuff time to build out dashboard/home-style page
     }
      
@@ -89,12 +81,7 @@ public class IndexhomeprofileCtl {
 			, HttpSession session) {
 		
 		if(session.getAttribute("userId") != null) {return "redirect:/home";} // redirect authorized users to the /home METHOD; don't expose the index page to already-authenticated users
-
         model.addAttribute("newUser", new UserMdl()); // login/reg form items: putting a new empty UserMdl obj for on the index page, so user can shove data into it using the form.
-//        model.addAttribute("newLogin", new LoginUserMdl()); // login no longer on the same page as register
-        
-        
-        System.out.println("Page Display: Register"); 
 		return "register.jsp"; 
 	}
 	
@@ -110,17 +97,12 @@ public class IndexhomeprofileCtl {
     	UserMdl user = userSrv.register(newUser, result);
         
         if(result.hasErrors()) {
-            // deliver the empty LoginUser object before re-rendering the reg/login page; the UserMdl obj will maintain the incoming values to this method
-//            model.addAttribute("newLogin", new LoginUserMdl()); // this delivery of empty loginUser object is no longer needed, since login/reg on sep pages
         	model.addAttribute("validationErrorMsg", "Registration errors.  See details in form below and try again.");
             return "register.jsp";
         }
         
         session.setAttribute("userId", user.getId());  // this is a repeat of the last line of the login method
-//	    return "redirect:/home";
-        
-        redirectAttributes.addFlashAttribute("successMsg", "WELCOME to PlayDateNow.  Take a moment to complete your profile: click on your name on the top right >> then click Profile.  Below: browse playdates and create your own.");
-        
+        redirectAttributes.addFlashAttribute("successMsg", "Welcome to PlayDateNow.  Take a moment to complete your profile: click on your name on the top right >> then click Profile.  Below: browse playdates and create your own.");
 	    return "redirect:/playdate"; // redirecting here to playdate for now, b/c insuff time to build out dashboard/home-style page
     }
      
@@ -128,8 +110,7 @@ public class IndexhomeprofileCtl {
 	public String logout(
 			HttpSession session
 			) {
-		// below nulls the session.userId value, which prevents access to any/all page(s) other than index, thus redirect to index. 
-    	session.setAttribute("userId", null);
+    	session.setAttribute("userId", null); // nulls the session.userId value, which prevents access to any/all page(s) other than index, thus redirect to index.
     	System.out.println("User logged out."); 
 	    return "redirect:/";
 	}
@@ -150,14 +131,12 @@ public class IndexhomeprofileCtl {
 			model.addAttribute("authUser", userSrv.findById(userId));
 			
 			System.out.println("Page Display: Home"); 
-//		    return "home.jsp";  
 		    return "redirect:/playdate"; // redirecting here to playdate for now, b/c insuff time to build out dashboard/home-style page
 		}
 
 		// view all profile
 		@GetMapping("/profile")
 		public String showAllprofile(
-//				@ModelAttribute("playdate") PlaydateMdl playdateMdl // this needed to display create-new on the page
 				Model model
 				, HttpSession session
 				) {
@@ -169,11 +148,10 @@ public class IndexhomeprofileCtl {
 			
 			List<UserMdl> profileList = userSrv.returnAll();
 			model.addAttribute("profileList", profileList);
-
 			return "profile/list.jsp";
 		}
 		
-		// display user profile page
+		// display profile page
 		@GetMapping("/profile/{id}")
 		public String showProfile(
 				@PathVariable("id") Long userProfileId
@@ -198,10 +176,7 @@ public class IndexhomeprofileCtl {
 			List<PlaydateMdl> userHostedPlaydateListPast = playdateSrv.userHostedPlaydateListPast(userProfileId);
 			model.addAttribute("userHostedPlaydateListPast", userHostedPlaydateListPast);
 			
-			Date todayDate = new Date(); 
-			
-			System.out.println("todayDate: " + todayDate); 
-			System.out.println("Page Display: Profile"); 
+//			Date todayDate = new Date(); // not sure why this here, I think it was for testing; 9/12 
 			return "profile/record.jsp";
 		}
 		
@@ -218,9 +193,7 @@ public class IndexhomeprofileCtl {
 			if(session.getAttribute("userId") == null) {return "redirect:/logout";}
 			Long userId = (Long) session.getAttribute("userId");
 			model.addAttribute("authUser", userSrv.findById(userId)); 
-			
-			
-			
+
 			// this delivers as-is userProfileObj, to initially populate the form fields 
 			UserMdl userProfileObj = userSrv.findById(userProfileId); 
 			
@@ -231,14 +204,6 @@ public class IndexhomeprofileCtl {
 			
 			model.addAttribute("userProfileAsis", userProfileObj); 
 			
-			
-			
-//			// records in stateterritory dropdown
-//			List<StateterritoryMdl> stateterritoryList = stateterritorySrv.returnAll();
-//			model.addAttribute("stateterritoryList", stateterritoryList);  
-			
-			// log page being rendered
-			System.out.println("Page Display: ProfileEdit");
 			
 							// START: fun with making lists for page consumption
 							
@@ -315,8 +280,5 @@ public class IndexhomeprofileCtl {
 				return "redirect:/profile/" + currentUserMdl.getId(); 
 			}
 		}
-		
-		
-		
-// end of ctl methods
+// end of methods
 }

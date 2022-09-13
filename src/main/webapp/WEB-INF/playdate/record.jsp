@@ -56,8 +56,6 @@
 							
 							<div class="row mt-3">
 								<div id="playdateInfoCol" class="col">
-									<!-- <div id="playdateInfoCard" class="card p-3 d-md-flex justify-content-start"> -->
-									
 										<div class="card p-2 m-0 border-0">
 											<p class="m-0 text-secondary" style="font-size: 0.8rem;">Event Status</p>
 											<p class="m-0">${playdate.eventStatus}</p>
@@ -110,8 +108,6 @@
 											<p class="m-0 text-secondary" style="font-size: 0.8rem;">Description</p>
 											<pre style="white-space: pre-wrap">${playdate.eventDescription}</pre>
 										</div>						
-										
-									<!-- </div>  --><!-- end playdateInfoCard -->
 								</div> <!-- end col -->
 								
 								<div id="rsvpCol" class="col">
@@ -165,25 +161,13 @@
 											</div>
 										</c:when>
 										<c:when test="${rsvpExistsCreatedByAuthUser}">
-											<!-- <div class="d-flex justify-content-end"> -->
 											<div class="row">
-												<%-- <div class="card p-2 border-0">
-													<p class="m-0 text-secondary" style="font-size: 0.8rem;">
-														You RSVPed on
-														<fmt:formatDate value="${rsvpObjForAuthUser.createdAt}" pattern="EEEE"/>,
-														<fmt:formatDate value="${rsvpObjForAuthUser.createdAt}" pattern="MMMM dd"/>
-														, 
-														<fmt:formatDate value="${rsvpObjForAuthUser.createdAt}" pattern="yyyy"/>, 
-														<fmt:formatDate value="${rsvpObjForAuthUser.createdAt}" pattern="h:mm a"/>
-														</p>
-												</div> --%>
 												<div class="col"></div>
 												<div class="col">
 													<p class="m-0 text-center" style="font-size: 1.25rem;">Your RSVP</p>
 												</div>
 												
 												<div class="col d-flex justify-content-end">
-													<%-- <a href= "/rsvp/${rsvpObjForAuthUser.id}/edit"><button class="btn btn-primary mb-2">Edit</button></a> --%>
 													<a href= "/playdate/${playdate.id}/rsvp/${rsvpObjForAuthUser.id}/edit"><button class="btn btn-primary mb-2">Edit</button></a>
 												</div>
 											</div>
@@ -260,20 +244,14 @@
 									
 										</c:otherwise>
 									</c:choose>
-									
-									
-
 									</div> <!-- end rsvpCard -->
 								</div> <!-- end col -->
 							</div> <!-- end row -->
 						
-							
 							<div id="rsvpListRow" class="row m-1">	
-								<!-- <p class="text-center m-1" style="font-size: 1.5rem;">Rsvp List</p> -->
 								
 	 							<table class="table table-striped table-hover table-responsive mt-2 caption-top">
 									<caption class="text-dark" style="font-size: 1.5rem;">Rsvp List</caption>
-									<%-- <caption class="text-dark" >Rsvp List</caption> --%>
 									<thead class="border-top-0">
 										<tr>
 											<th scope="col">Name</th> 
@@ -298,7 +276,6 @@
 								</table>
 		
 							</div> <!-- end rsvpListRow -->
-
 					</div> <!-- end playdateCard -->
 			</div> <!-- end col -->
 			<div class="col">

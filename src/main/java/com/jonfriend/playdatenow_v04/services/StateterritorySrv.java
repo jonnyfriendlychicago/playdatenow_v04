@@ -14,7 +14,6 @@ public class StateterritorySrv {
 	
 	public StateterritorySrv(StateterritoryRpo stateterritoryRpo) {this.stateterritoryRpo = stateterritoryRpo;}
 
-	
 	// returns all stateterritory 
 	public List<StateterritoryMdl> returnAll(){
 		return stateterritoryRpo.findAll();

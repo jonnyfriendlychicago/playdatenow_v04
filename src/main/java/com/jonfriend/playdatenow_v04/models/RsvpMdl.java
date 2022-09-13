@@ -78,7 +78,7 @@ public class RsvpMdl {
         this.updatedAt = new Date();
     }
 
-    // getters and setters - start
+    // begin: getters and setters 
 
     public Long getId() {
 		return id;
@@ -152,7 +152,7 @@ public class RsvpMdl {
 		this.playdateMdl = playdateMdl;
 	}
 
-    // getters and setters - end
+    // end: getters and setters
     
 // end mdl
 }

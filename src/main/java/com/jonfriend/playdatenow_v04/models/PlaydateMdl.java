@@ -47,7 +47,6 @@ public class PlaydateMdl {
 	@NotBlank(message="Location Address required.")
 	private String locationAddy;
 	
-//	@Transient
 	@NotNull(message="Date is required.")
 	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private Date eventDate;
@@ -66,7 +65,7 @@ public class PlaydateMdl {
 	// Aug deployment note: presently not incorporating this element, for biz reasons. 
 	private Integer maxCountAdults; 
 	
-	// fields added to house host RSVP
+	// fields added to house the host RSVP
 	
     @NotBlank(message="RSVP status is required.")
     private String rsvpStatus;
@@ -265,10 +264,6 @@ public class PlaydateMdl {
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
-
-	
-	
-	
     // end: getters and setters
     
 // end mdl

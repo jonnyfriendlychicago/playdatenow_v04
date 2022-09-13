@@ -50,10 +50,7 @@
 		</div> <!-- end row -->
 	</div><!-- end main -->
  
-
-	
+	<jsp:include page="/WEB-INF/include/footerbuffer.jsp"/>
 	<jsp:include page="include/footer.jsp"/>
-			
-			
 </body>
 </html>
