@@ -27,24 +27,19 @@
 							<div id="creationOrganizerButtons" class="d-flex justify-content-between">
 								
 								<div class="card p-2 border-0">
-									<p class="m-0 text-secondary" style="font-size: 0.8rem;">
-										Created by 
+									<p class="m-0 text-secondary" style="font-size: 0.8rem;">Created by 
 										<c:choose>
-											<c:when test="${playdate.userMdl.id == authUser.id}">
-											you (${playdate.userMdl.userName})
+											<c:when test="${playdateCreatedById == authUser.id}">
+											you (${playdateCreatedByUserName})
 											</c:when>
 											<c:otherwise>
-											${playdate.userMdl.userName}
+											${playdateCreatedByUserName}
 											</c:otherwise>
 										</c:choose>
 										on 
-										<fmt:formatDate value="${playdate.createdAt}" pattern="EEEE"/>,
-										<fmt:formatDate value="${playdate.createdAt}" pattern="MMMM dd"/>
-										, 
-										<fmt:formatDate value="${playdate.createdAt}" pattern="yyyy"/>, 
-										<fmt:formatDate value="${playdate.createdAt}" pattern="h:mm a"/>
+										<fmt:formatDate value="${playdateCreatedAt}" pattern="EEEE"/>, <fmt:formatDate value="${playdateCreatedAt}" pattern="MMMM dd"/>, <fmt:formatDate value="${playdateCreatedAt}" pattern="yyyy"/>, <fmt:formatDate value="${playdateCreatedAt}" pattern="h:mm a"/>
 									</p>
-									<c:if test="${playdate.userMdl.id == authUser.id}">
+									<c:if test="${playdateCreatedById == authUser.id}">
 										<p class="m-0 text-secondary">You are the organizer of this event.</p>
 									</c:if>
 								</div>
@@ -151,9 +146,9 @@
 											<tbody>
 												<tr>
 													<td>${rsvpCount}</td>
-													<td>${sumRsvpDotAdultsCount}</td>
+													<td>${aggAdultsCount}</td>
 													<td>${playdate.maxCountKids}</td>
-													<td>${sumRsvpDotKidsCount}</td>
+													<td>${aggKidsCount}</td>
 													<td>${openKidsSpots}</td>
 												</tr>
 											</tbody>
