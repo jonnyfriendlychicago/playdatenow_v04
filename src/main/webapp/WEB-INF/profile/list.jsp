@@ -30,10 +30,8 @@
 					</ul>
 				</div>
 			</c:forEach>
-			
-			
+
 		</div> <!-- end profileCardArray -->
-			
 	</div> <!-- end main -->  
  	<jsp:include page="/WEB-INF/include/footerbuffer.jsp"/>
  	<jsp:include page="/WEB-INF/include/footer.jsp"/>

@@ -92,36 +92,6 @@
 							</div> <!-- end playdateInfoCol -->
 						
 							<div id="rsvpEtcCol" class="col">
-						
-								<%-- <p>your rsvp info</p>
-								
-								<div class="form-floating mb-3">
-									<form:select path="rsvpStatus" class="form-control" id="rsvpStatus" placeholder="rsvpStatus" >
-										<form:option value="In" path="rsvpStatus">In</form:option>
-										<form:option value="Maybe" path="rsvpStatus">Maybe</form:option>
-										<form:option value="Out" path="rsvpStatus">Out</form:option>
-									</form:select>
-									<form:label path="rsvpStatus" for="rsvpStatus">Status</form:label>
-									<p class="text-danger"><form:errors path="rsvpStatus" />
-								</div>
-								
-								<div class="form-floating mb-3">
-									<form:input path="kidCount" type="number" class="form-control" id="kidCount" placeholder="kidCount" min="1" step="1"/>
-									<form:label path="kidCount" for="kidCount"># of Kids</form:label>
-									<p class="text-danger"><form:errors path="kidCount" />
-								</div>
-								
-								<div class="form-floating mb-3">
-									<form:input path="adultCount" type="number" class="form-control" id="adultCount" placeholder="adultCount" min="1" step="1" />
-									<form:label path="adultCount" for="adultCount"># of Adults</form:label>
-									<p class="text-danger"><form:errors path="adultCount" />
-								</div>
-			
-								<div class="form-floating mb-3">
-									<form:textarea path="comment" type="text" class="form-control" id="comment" placeholder="comment" style="height: 10rem;"/>
-									<form:label path="comment" for="comment">Comment</form:label>
-									<p class="text-danger"><form:errors path="comment" />
-								</div> --%>
 								
 								<div id="rsvpCard" class="card p-3 d-md-flex justify-content-start">
 									<p class="m-0 text-center" style="font-size: 1.25rem;">Your RSVP</p>

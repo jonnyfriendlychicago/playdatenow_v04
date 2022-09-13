@@ -10,14 +10,6 @@
 	</div>
 </div> --%>
 
-<!-- <div id="navBar" class="container-fluid">
-	<a href="/home">Home</a> 
-	<a href="/house">House</a> 
-	<a href="/playdate">Playdate</a>
-	<a href="/twintwo">Twintwo</a>
-</div> -->
-
-
 
 <%-- <header class="p-3 bg-black">
 	<div class="container-fluid">
@@ -86,16 +78,3 @@
       </div>
     </div>
 </nav>
-
-
-<!-- 		<ul class="navbar-nav">
-      		<li class="nav-item">
-        		<a class="nav-link" href="#">Link 1</a>
-      		</li>
-      		<li class="nav-item">
-        		<a class="nav-link" href="#">Link 2</a>
-      		</li>
-      		<li class="nav-item">
-        		<a class="nav-link" href="#">Link 3</a>
-      		</li>
-    	</ul> -->

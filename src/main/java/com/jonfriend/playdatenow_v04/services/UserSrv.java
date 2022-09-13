@@ -49,11 +49,10 @@ public class UserSrv{
     	
         // Return null if result has errors
         if(result.hasErrors()) {
-            // Exit the method and go back to the controller to handle the response
-            return null;
+            return null; // Exit the method and go back to the controller to handle the response
         }
         
-     // Hash and set password, save user to database
+        // Hash and set password, save user to database
         String hashed = BCrypt.hashpw(newUser.getPassword(), BCrypt.gensalt());
         newUser.setPassword(hashed);
     	return userRpo.save(newUser);
@@ -145,7 +144,6 @@ public class UserSrv{
     	
     	// end new username stuff
     	
-    	
         if(result.hasErrors()) {
             return null; // Exit the method and go back to the controller to handle the response
         }
@@ -153,5 +151,5 @@ public class UserSrv{
     	return userRpo.save(sketchedUpdatedUserMdl);
     }
 
-// end of methods 	
+// end srv
 }

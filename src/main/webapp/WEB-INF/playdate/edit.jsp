@@ -49,7 +49,6 @@
 						
 						<div id="eventDeetsAndRsvpRow" class="row mt-3">
 							<div id="playdateInfoCol" class="col">
-							<%-- <form:form action='/playdate/edit' method='post' modelAttribute='playdate'>  --%>
 								<form:input type="hidden"  path="id" />
 								
 								<div class="form-floating mb-3">
@@ -118,46 +117,9 @@
 									<form:label path="maxCountKids" for="maxCountKids">Max. Kids Number</form:label>
 									<p class="text-danger"><form:errors path="maxCountKids" />
 								</div>
-								
-<%-- 								<p>your rsvp info</p>
-							
-								<div class="form-floating mb-3">
-									<form:select path="rsvpStatus" class="form-control" id="rsvpStatus" placeholder="rsvpStatus" >
-										<form:option value="In" path="rsvpStatus">In</form:option>
-										<form:option value="Maybe" path="rsvpStatus">Maybe</form:option>
-										<form:option value="Out" path="rsvpStatus">Out</form:option>
-									</form:select>
-									<form:label path="rsvpStatus" for="rsvpStatus">Status</form:label>
-									<p class="text-danger"><form:errors path="rsvpStatus" />
-								</div>
-								
-								<div class="form-floating mb-3">
-									<form:input path="kidCount" type="number" class="form-control" id="kidCount" placeholder="kidCount" min="1" step="1"/>
-									<form:label path="kidCount" for="kidCount"># of Kids</form:label>
-									<p class="text-danger"><form:errors path="kidCount" />
-								</div>
-								
-								<div class="form-floating mb-3">
-									<form:input path="adultCount" type="number" class="form-control" id="adultCount" placeholder="adultCount" min="1" step="1" />
-									<form:label path="adultCount" for="adultCount"># of Adults</form:label>
-									<p class="text-danger"><form:errors path="adultCount" />
-								</div>
-			
-								<div class="form-floating mb-3">
-									<form:textarea path="comment" type="text" class="form-control" id="comment" placeholder="comment" style="height: 10rem;"/>
-									<form:label path="comment" for="comment">Comment</form:label>
-									<p class="text-danger"><form:errors path="comment" />
-								</div> --%>
-								
-								<!-- <div>
-									<button type="submit" class="btn btn-primary">Update</button>
-								</div> --> 
-								
-							<%-- </form:form> <!-- end playdateEditForm --> --%>
 						</div> <!-- end playdateInfoCol -->
 						
 						<div id="rsvpEtcCol" class="col">
-							<!-- <div id="maxSpace" style="display: flex; flex-direction: column; justify-content: space-between;"> this line is just not working -->
 							<div id="rsvpTrackingCard" class="card p-3 d-md-flex justify-content-start mb-3">
 								<p class="m-0 text-secondary text-center">RSVP Tracking</p>
 								<table class="table table-responsive mt-2 table-borderless table-sm">
@@ -183,7 +145,6 @@
 							</div> <!-- end rsvpTrackingCard -->
 									
 							<div id="rsvpCard" class="card p-3 d-md-flex justify-content-start">
-								<!-- <p>your rsvp info</p> -->
 								<p class="m-0 text-center" style="font-size: 1.25rem;">Your RSVP</p>
 							
 								<div class="form-floating mb-3">
@@ -213,55 +174,6 @@
 									<form:label path="comment" for="comment">Comment</form:label>
 									<p class="text-danger"><form:errors path="comment" />
 								</div>
-							<%-- 
-							<c:choose>
-								<c:when test="${rsvpExistsCreatedByAuthUser}">
-									<div class="d-flex justify-content-center">
-										<div class="card p-2 border-0">
-											<p class="m-0 text-secondary" style="font-size: 0.8rem;">
-												You RSVPed on
-												<fmt:formatDate value="${rsvpObjForAuthUser.createdAt}" pattern="EEEE"/>,
-												<fmt:formatDate value="${rsvpObjForAuthUser.createdAt}" pattern="MMMM dd"/>
-												, 
-												<fmt:formatDate value="${rsvpObjForAuthUser.createdAt}" pattern="yyyy"/>, 
-												<fmt:formatDate value="${rsvpObjForAuthUser.createdAt}" pattern="h:mm a"/>
-												</p>
-										</div>
-									</div>
-					
-									<div class="card p-2 m-0 border-0">
-										<p class="m-0 text-secondary" style="font-size: 0.8rem;">Status</p>
-										<p class="m-0">${rsvpObjForAuthUser.rsvpStatus}</p>
-									</div>
-		
-									<div class="card p-2 border-0">
-										<p class="m-0 text-secondary" style="font-size: 0.8rem;"># of Kids</p>
-										<p class="m-0">${rsvpObjForAuthUser.kidCount}</p>
-									</div>
-									
-									<div class="card p-2 border-0">
-										<p class="m-0 text-secondary" style="font-size: 0.8rem;"># of Adults</p>
-										<p class="m-0">${rsvpObjForAuthUser.adultCount}</p>
-									</div>
-									
-									<div class="card p-2 border-0">
-										<p class="m-0 text-secondary" style="font-size: 0.8rem;">Comment</p>
-										<pre class="m-0">${rsvpObjForAuthUser.comment}</pre>
-									</div>
-									
-									<div class="card p-2 border-0 d-md-flex justify-content-center bg-light ">
-										<p class="m-0 text-center text-secondary">Need to update your RSVP?<br>Click Cancel or Update to return to the main playdate screen.</p>
-									</div>
-
-								</c:when>
-								<c:otherwise>
-									<div class="card p-2 border-0 d-md-flex justify-content-center bg-light ">
-										<p class="m-0 text-center text-secondary">You have not RSVPed for this event yet.<br>You can enter your RSVP once you click Cancel or Update to return to the main playdate screen.</p>
-									</div>
-								</c:otherwise>
-							</c:choose>
- 							--%>
- 														
 						</div> <!-- end rsvpCard -->
 						</div> <!-- end rsvpEtcCol-->
 					</div> <!-- end eventDeetsAndRsvpRow -->
@@ -272,9 +184,6 @@
 					</div> <!-- end bottomButtonTray -->
 					</form:form> <!-- end playdateEditForm -->
 					<div id="rsvpListRow" class="row m-1">	
-						<!-- <p class="text-center m-1" style="font-size: 1.5rem;">Rsvp List</p> -->
-						<!-- <p class="m-0 pl-1" style="font-size: 1.5rem;">Rsvp List</p> -->
-						
 							<table class="table table-striped table-hover table-responsive mt-2 caption-top">
 							<caption class="text-dark" style="font-size: 1.5rem;">Rsvp List</caption>
 							<thead class="border-top-0">

@@ -26,21 +26,15 @@ public class UserupdateMdl {
     
     private String city;
     
-//    private String state;
-//    
-//    private String stateTerritory;
-    
     private String zipCode;
     
     // begin joins     
-
-
     // end joins 
     
     // instantiate the mdl class
     public UserupdateMdl() {}
 
-    // begin getters/setters
+    // begin: getters/setters
 
     public String getUserName() {
 		return userName;
@@ -98,6 +92,7 @@ public class UserupdateMdl {
 		this.zipCode = zipCode;
 	}
 
-    // end getters/setters
-    
+    // end: getters/setters
+	
+// end mdl
 }

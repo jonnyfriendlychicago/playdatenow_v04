@@ -62,17 +62,8 @@
 			</table>
 			
 		</div> <!-- end playdateList -->
-		
-
-		
-		
 	</div> <!-- end main -->  
  	<jsp:include page="/WEB-INF/include/footerbuffer.jsp"/>
  	<jsp:include page="/WEB-INF/include/footer.jsp"/>
 </body>
-<!-- <script type="text/javascript">
-    function clearSearch() {
-        window.location = "[[@{/}]]";
-    }
-</script> -->
 </html>

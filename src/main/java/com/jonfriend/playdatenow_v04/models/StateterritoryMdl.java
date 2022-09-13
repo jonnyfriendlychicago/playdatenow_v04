@@ -1,8 +1,5 @@
 package com.jonfriend.playdatenow_v04.models;
 
-
-
-
 import java.util.List;
 
 import javax.persistence.Entity;

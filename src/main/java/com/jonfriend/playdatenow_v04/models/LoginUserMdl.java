@@ -10,16 +10,13 @@ public class LoginUserMdl {
     @Email(message="Please enter a valid email!")
     private String email;
     
-    // jrf: think about how to maek this mdl: login with email OR userName
-    
     @NotEmpty(message="Password is required.")
-    // update size constraint to be greater than 1 (8?) when ready to move beyond testing.
     @Size(min=1, max=128, message="Password must be between 8 and 128 characters")
     private String password;
     
     public LoginUserMdl() {}
 
-    // begin GS
+    // begin: getters/setters
 	public String getEmail() {
 		return email;
 	}
@@ -36,8 +33,5 @@ public class LoginUserMdl {
 		this.password = password;
 	}
 
-    // end GS
-    
-    
-    
+    // end: getters/setters
 }

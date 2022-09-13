@@ -76,7 +76,6 @@ public class UserMdl {
     @OneToMany(mappedBy="userMdl", fetch = FetchType.LAZY)
     private List<RsvpMdl> rsvpList; 
     
-	
     // end joins 
     
     // instantiate the mdl
@@ -205,7 +204,7 @@ public class UserMdl {
 		this.rsvpList = rsvpList;
 	}
 
-    // end G/S
+    // end: getters and setters
   
 }
 

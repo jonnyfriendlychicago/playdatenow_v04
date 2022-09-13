@@ -9,7 +9,6 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -45,7 +44,6 @@ public class PlaydateCtl {
 			@ModelAttribute("playdate") PlaydateMdl playdateMdl // this needed to display create-new on the page
 			, Model model
 			, HttpSession session
-//			, @Param("keyword") Long keyword // new
 			) {
 		
 		// log out the unauth / deliver the auth use data
@@ -56,7 +54,6 @@ public class PlaydateCtl {
 		// orig return all list
 		List<PlaydateMdl> playdateList = playdateSrv.returnAll();
 		model.addAttribute("playdateList", playdateList);
-
 		return "playdate/list.jsp";
 	}
 	
@@ -75,7 +72,6 @@ public class PlaydateCtl {
 		
 		String[] startTimeList = { "8:00am",	"8:30am",	"9:00am",	"9:30am",	"10:00am",	"10:30am",	"11:00am",	"11:30am",	"12:00pm",	"12:30pm",	"1:00pm",	"1:30pm",	"2:00pm",	"2:30pm",	"3:00pm",	"3:30pm",	"4:00pm",	"4:30pm",	"5:00pm",	"5:30pm",	"6:00pm",	"6:30pm",	"7:00pm",	"7:30pm",	"8:00pm",	"8:30pm"};
 		model.addAttribute("startTimeList", startTimeList ); 
-		
 		return "playdate/create.jsp";
 	}
 	 
@@ -99,15 +95,13 @@ public class PlaydateCtl {
 			String[] startTimeList = { "8:00am",	"8:30am",	"9:00am",	"9:30am",	"10:00am",	"10:30am",	"11:00am",	"11:30am",	"12:00pm",	"12:30pm",	"1:00pm",	"1:30pm",	"2:00pm",	"2:30pm",	"3:00pm",	"3:30pm",	"4:00pm",	"4:30pm",	"5:00pm",	"5:30pm",	"6:00pm",	"6:30pm",	"7:00pm",	"7:30pm",	"8:00pm",	"8:30pm"};
 			model.addAttribute("startTimeList", startTimeList ); 
 			return "playdate/create.jsp";
+		
 		} else {
 
 			UserMdl currentUserMdl = userSrv.findById(authenticatedUserId); // gets the userModel object by calling the user service with the session user id
 			playdateMdl.setUserMdl( currentUserMdl); //  sets the userId of the new record with above acquisition.
-			
 			playdateSrv.create(playdateMdl);
-			
 			Long newlyCreatedPlaydateID = playdateMdl.getId();  
-			
 			redirectAttributes.addFlashAttribute("successMsg", "This playdate is gonna be awesome!  Make sure you invite some friends to RSVP.");
 			return "redirect:/playdate/" + newlyCreatedPlaydateID;
 		}
@@ -169,9 +163,9 @@ public class PlaydateCtl {
 		model.addAttribute("openKidsSpots", openKidsSpots); 
 		// end: calculate various RSVP-related stats.  
 		
-		// get/deliver list of unioned rsvp records
+		// begin: get/deliver list of unioned rsvp records
 		List<PlaydateUserUnionRsvpUser> playdateRsvpList = rsvpSrv.playdateRsvpList(playdateId);
-		model.addAttribute("playdateRsvpList", playdateRsvpList);  
+		model.addAttribute("playdateRsvpList", playdateRsvpList); // end: get/deliver list of unioned rsvp records  
 
 		// START: fun with making lists for page consumption
 			
@@ -229,9 +223,6 @@ public class PlaydateCtl {
 		Date playdateCreatedAt = playdateObj.getCreatedAt(); 
 		Long playdateCreatedById = playdateObj.getUserMdl().getId();
 		String playdateCreatedByUserName = playdateObj.getUserMdl().getUserName();
-
-		//		UserMdl currentUserMdl = userSrv.findById(authenticatedUserId); // gets the userModel object by calling the user service with the session user id value
-//		PlaydateMdl playdateObj = playdateSrv.findById(playdateId); // pre-populates the values in the playdate edit interface (?).  also, used to get the rsvp list
 		
 		// begin: calculate various RSVP-related stats.  NOTE: this all could be done with native queries as well, but this is good function/loop practice.  
 		List<RsvpMdl> rsvpList = rsvpSrv.returnAllRsvpForPlaydate(playdateObj); // list of rsvps, which we will use downstream
@@ -270,55 +261,6 @@ public class PlaydateCtl {
 		model.addAttribute("aggAdultsCount", aggAdultsCount); 
 		model.addAttribute("openKidsSpots", openKidsSpots); 
 		// end: calculate various RSVP-related stats.  
-		
-//		List<RsvpMdl> rsvpList = playdateObj.getRsvpList(); // instantiate the java list	
-		
-//		UserMdl recordCreatorUserMdl = playdateObj.getUserMdl(); // dont' think this is actually being used on this page. 
-		// start: fun with functions & loops
-//			Integer rsvpCount = rsvpList.size(); // get a count of how many items in the list
-//			Integer aggKidsCount = 0; // instantiate the java variable that we will update in the loop 
-//			Boolean rsvpExistsCreatedByAuthUser = false; // instantiate the java variable that we will update in the loop
-//			
-//			Long rsvpIdCreatedByAuthUser = (long) 0; 
-//			
-//			Integer aggAdultsCount = 0; // instantiate the java variable that we will update in the loop
-//			Integer openKidsSpots = 0; // instantiate the java variable that we will update in the loop
-//			
-//			for (int i=0; i < rsvpCount; i++  ) {
-//				System.out.println("RSVP #" + i +  " (" + rsvpList.get(i).getUserMdl().getUserName() + "): " + rsvpList.get(i).getKidCount() + " (" + rsvpList.get(i).getRsvpStatus() + ")"  ); 
-//				
-//	//			aggKidsCount += rsvpList.get(i).getKidCount();
-//				// JRF: line above replaced by if/else below.   let's see how it goes
-//				if ( rsvpList.get(i).getRsvpStatus().equals("In")) {
-//					aggKidsCount = aggKidsCount + rsvpList.get(i).getKidCount(); 
-//				} else {
-//					aggKidsCount = aggKidsCount + 0; 
-//				}
-//				
-//				if ( rsvpList.get(i).getRsvpStatus().equals("In")) {
-//					aggAdultsCount = aggAdultsCount + rsvpList.get(i).getAdultCount(); 
-//				} else {
-//					aggAdultsCount = aggAdultsCount + 0; 
-//				} 
-//				
-//				if (rsvpList.get(i).getUserMdl().equals(currentUserMdl) )
-//				{
-//					rsvpExistsCreatedByAuthUser = true; // if there's a a match, set to true.  that's it, that's all you gotta do. 
-//					rsvpIdCreatedByAuthUser = rsvpList.get(i).getId(); 
-//				}   
-//			}
-//			openKidsSpots = playdateObj.getMaxCountKids() - aggKidsCount; 
-//			RsvpMdl rsvpObjForAuthUser = rsvpSrv.findById(rsvpIdCreatedByAuthUser); 
-//		// end: fun with functions & loops
-
-//		model.addAttribute("playdate", playdateObj);
-//		model.addAttribute("rsvpCount", rsvpCount); 
-//		model.addAttribute("aggKidsCount", aggKidsCount); 
-//		model.addAttribute("rsvpExistsCreatedByAuthUser", rsvpExistsCreatedByAuthUser);
-//		model.addAttribute("rsvpObjForAuthUser", rsvpObjForAuthUser); 
-//		model.addAttribute("rsvpList", rsvpList);
-//		model.addAttribute("aggAdultsCount", aggAdultsCount); 
-//		model.addAttribute("openKidsSpots", openKidsSpots); 
 		
 		// get/deliver list of unioned rsvp records
 		List<PlaydateUserUnionRsvpUser> playdateRsvpList = rsvpSrv.playdateRsvpList(playdateId);
@@ -374,7 +316,7 @@ public class PlaydateCtl {
 		}
 		
 		if (result.hasErrors()) { 			
-//			model.addAttribute("playdate", playdateObj); // if this line is delivered, it will override the erroreous values we are trying to point out
+			// note: do not re-deliver playdateObj: doing so will overrride all the values the users submitted / system rejected
 			model.addAttribute("validationErrorMsg", "Uh-oh! Please fix the errors noted below and submit again.  (Or cancel.)"); //redirectAttributes doesn't work here b/c we are not redirecting, we are merely returning.  so use modAtt instead.
 			Long playdateId = playdateMdl.getId(); // need this here, so that the playdateId can be referenced downstream
 			
@@ -443,8 +385,6 @@ public class PlaydateCtl {
 		}
 	}
 	
-
-	
 	// delete playdate
     @DeleteMapping("/playdate/{id}")
     public String deletePlaydate(
@@ -480,6 +420,5 @@ public class PlaydateCtl {
         return "redirect:/playdate";
     }
 	
-
 // end of methods
 }

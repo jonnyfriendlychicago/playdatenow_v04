@@ -88,8 +88,6 @@
 								<button type="submit" class="btn btn-primary w-100">Update</button>
 							</div>
 						</form:form>
-			
-						
 					</div> <!-- end profileCard -->
 				</div> <!-- end col -->
 				<div class="col">
