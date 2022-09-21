@@ -10,19 +10,21 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+//import java.util.ArrayList;
+//import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import com.jonfriend.playdatenow_v04.dataTransferObjects.UserUpdateDto;
 import com.jonfriend.playdatenow_v04.models.LoginUserMdl;
 import com.jonfriend.playdatenow_v04.models.PlaydateMdl;
 //import com.jonfriend.playdatenow_v04.models.PlaydateMdl;
 //import com.jonfriend.playdatenow_v04.models.StateterritoryMdl;
 import com.jonfriend.playdatenow_v04.models.UserMdl;
-import com.jonfriend.playdatenow_v04.models.UserupdateMdl;
+//import com.jonfriend.playdatenow_v04.models.UserUpdateMdl;
+//import com.jonfriend.playdatenow_v04.models.UserupdateMdl;
 import com.jonfriend.playdatenow_v04.services.PlaydateSrv;
 //import com.jonfriend.playdatenow_v04.services.StateterritorySrv;
 import com.jonfriend.playdatenow_v04.services.UserSrv;
@@ -183,7 +185,8 @@ public class IndexhomeprofileCtl {
 		// display edit page
 		@GetMapping("/profile/{id}/edit")
 		public String editProfile(
-				@ModelAttribute("userProfileTobe") UserupdateMdl userupdateMdl
+//				@ModelAttribute("userProfileTobe") UserupdateMdl userupdateObj
+				@ModelAttribute("userProfileTobe") UserUpdateDto userupdateObj
 				, @PathVariable("id") Long userProfileId
 				, Model model
 				, HttpSession session
@@ -194,48 +197,22 @@ public class IndexhomeprofileCtl {
 			Long userId = (Long) session.getAttribute("userId");
 			model.addAttribute("authUser", userSrv.findById(userId)); 
 
-			// this delivers as-is userProfileObj, to initially populate the form fields 
-			UserMdl userProfileObj = userSrv.findById(userProfileId); 
+			// (1) acquire as-is object/values from db
+			UserMdl userObj = userSrv.findById(userProfileId); 
 			
-			userupdateMdl.setAboutMe(userProfileObj.getAboutMe()); 
-			//JRF next steps: do above for each field we want to manage on the page, then...
-			/// update the edit.jsp by removing all thsoe userProfileAsIs junky things
-			// then we can whack model.addAtt-userprofile stuff
+			// (2) Populate the initially-empty userupdateObj (being sent to the form) with the values from the existing record
+			userupdateObj.setAboutMe(userObj.getAboutMe()); 
+			userupdateObj.setLastName(userObj.getLastName()); 
+			userupdateObj.setUserName(userObj.getUserName()); 
+			userupdateObj.setEmail(userObj.getEmail()); 
+			userupdateObj.setFirstName(userObj.getFirstName()); 
+			userupdateObj.setCity(userObj.getCity()); 
+			userupdateObj.setZipCode(userObj.getZipCode()); 
 			
-			model.addAttribute("userProfileAsis", userProfileObj); 
+			// (3) not related to above, but easily confused: 
 			
-			
-							// START: fun with making lists for page consumption
-							
-							// quick/dirty stateList
-							String[] stateList = { "Alabama", "Alaska", "Arizona"};
-							model.addAttribute("stateList", stateList ); 
-							
-							// initalize empty array list (that we'll populate then send to page)
-							ArrayList<Object> stateListEnhanced = new ArrayList<Object>();
-							
-							// initialize feeder lists: 
-							String[] stateSpellList = {"Alabama" , "Alaska" , "Arizona"}; 
-							String[] stateAbbrvList = {"AL" , "AK" , "AZ"}; 
-							
-							// get variable for submitting to the loop as upper boundary
-							Integer stateListSpellDrawerCount =  stateSpellList.length; 
-							 
-							// initialize for-loop 
-							
-							for (int i=0; i < stateListSpellDrawerCount; i++  ) {
-				//				System.out.println("value of item in drawer " + i + " -- " + stateSpellList[i]);
-								HashMap<String, String> singleStateHashMap = new HashMap<String, String>();
-								singleStateHashMap.put("'StateName'", "'" + stateSpellList[i] + "'");
-								singleStateHashMap.put("'StateAbbv'", "'" + stateAbbrvList[i] + "'");
-								stateListEnhanced.add(singleStateHashMap); 
-								System.out.println("stateListEnhanced: " + stateListEnhanced); 
-							}
-							
-							model.addAttribute("stateListEnhanced", stateListEnhanced ); 
-							
-							// END: fun with making lists for page consumption
-			
+			model.addAttribute("userProfile", userObj); // send the as-is object to the page, so static values can be used (createdAt, Id, etc.)
+
 			return "profile/edit.jsp";
 		}
 		
@@ -243,7 +220,8 @@ public class IndexhomeprofileCtl {
 		@PostMapping("/profile/edit")
 		public String PostTheEditProfile(
 				@Valid 
-				@ModelAttribute("userProfileTobe") UserupdateMdl userupdateMdl
+//				@ModelAttribute("userProfileTobe") UserupdateMdl userupdateObj
+				@ModelAttribute("userProfileTobe") UserUpdateDto userupdateObj
 				, BindingResult result
 				, Model model
 				, HttpSession session
@@ -253,31 +231,29 @@ public class IndexhomeprofileCtl {
 			// log out the unauth / deliver the auth use data
 			if(session.getAttribute("userId") == null) {return "redirect:/logout";}
 			Long authenticatedUserId = (Long) session.getAttribute("userId");
-			System.out.println("authenticatedUserId: " + authenticatedUserId); 
-//			model.addAttribute("authUser", userSrv.findById(authenticatedUserId));
+			model.addAttribute("authUser", userSrv.findById(authenticatedUserId));
 			
-			UserMdl currentUserMdl = userSrv.findById(authenticatedUserId); //  gets the userModel object by calling the user service with the session user id
-			currentUserMdl.setEmail(userupdateMdl.getEmail()); 
-			currentUserMdl.setUserName(userupdateMdl.getUserName()); 
-			currentUserMdl.setFirstName(userupdateMdl.getFirstName() ); 
-			currentUserMdl.setLastName(userupdateMdl.getLastName() ); 
+			// (1) acquire as-is object/values from db (as you did in the display mthd)
+			UserMdl userObj = userSrv.findById(authenticatedUserId); //  gets the userModel object by calling the user service with the session user id
 			
-			currentUserMdl.setAboutMe(userupdateMdl.getAboutMe() ); 
-			currentUserMdl.setCity(userupdateMdl.getCity() ); 
-//			currentUserMdl.setStateTerritory(userupdateMdl.getStateTerritory() ); 
-			currentUserMdl.setZipCode(userupdateMdl.getZipCode() ); 
+			// (2) overwrite the targeted fields in the userObj with values from the userupdateObj
+			userObj.setEmail(userupdateObj.getEmail()); 
+			userObj.setUserName(userupdateObj.getUserName()); 
+			userObj.setFirstName(userupdateObj.getFirstName() ); 
+			userObj.setLastName(userupdateObj.getLastName() ); 
 			
-//			currentUserMdl.setStateterritoryMdl(userupdateMdl.getStateterritoryMdl()); 
+			userObj.setAboutMe(userupdateObj.getAboutMe() ); 
+			userObj.setCity(userupdateObj.getCity() );  
+			userObj.setZipCode(userupdateObj.getZipCode() ); 
 			
-//				currentUserMdl.setConfirm("hello");  // this line not needed when validation taken off the confirm password field on the userMdl.  
-			
-			userSrv.updateUserProfile(currentUserMdl, result);
+			// (3) run the service to save the updated object
+			userSrv.updateUserProfile(userObj, result);
 			
 			if (result.hasErrors() ) { 
-				System.out.println("on profile/edit error path"); 
+				model.addAttribute("userProfile", userObj); // send the as-is object to the page, so static values can be used (createdAt, Id, etc.)
 				return "profile/edit.jsp";
 			} else {
-				return "redirect:/profile/" + currentUserMdl.getId(); 
+				return "redirect:/profile/" + userObj.getId(); 
 			}
 		}
 // end of methods
