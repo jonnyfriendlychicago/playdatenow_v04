@@ -9,6 +9,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn; 
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -28,7 +31,6 @@ public class UserMdl {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    
 	@Column(updatable=false)
 	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private Date createdAt;
@@ -37,26 +39,34 @@ public class UserMdl {
 
 	// begin: entity-specific fields
 	
-    @NotEmpty(message="Username required.")
-    @Size(min=8, max=128, message="Username must be between 3 and 30 characters.")
+//    @NotEmpty(message="Username required.")
+//    @Size(min=8, max=128, message="Username must be between 3 and 30 characters.")
+	// above lines nuked for springSec
     private String userName;
     
-    @NotEmpty(message="Email required.")
-    @Email(message="Please enter a valid email.")
+//    @NotEmpty(message="Email required.")
+//    @Email(message="Please enter a valid email.")
+	// above lines nuked for springSec
     private String email;
     
-    @NotEmpty(message="Password required.")
-    @Size(min=8, max=128, message="Password must be between 8 and 20 characters.")
+    private String firstName;
+    
+    private String lastName;
+    
+    private Date lastLogin; // added for springSec
+
+//    @NotEmpty(message="Password required.")
+//    @Size(min=8, max=128, message="Password must be between 8 and 20 characters.")
+    // above lines whacked for springSec, also added line below which doesn't seem right, but copied from BP
+    @Size(min=3)
     private String password;
     
     @Transient
 //    @NotEmpty(message="Confirm Password is required!")  // this is not necessary
 //    @Size(min=3, max=128, message="Confirm Password must match password") // this is not necessary
-    private String confirm;
-    
-    private String firstName;
-    
-    private String lastName;
+//    private String confirm;
+    // above line replaced by below; BP calls the field "passwordConfirm"
+    private String passwordConfirm;
     
     private String aboutMe;
     
@@ -76,6 +86,14 @@ public class UserMdl {
     @OneToMany(mappedBy="userMdl", fetch = FetchType.LAZY)
     private List<RsvpMdl> rsvpList; 
     
+    // below added for springSec
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "user_role", 
+        joinColumns = @JoinColumn(name = "user_id"), 
+        inverseJoinColumns = @JoinColumn(name = "role_id")
+        )
+    private List<RoleMdl> roleMdl;
     // end joins 
     
     // instantiate the mdl
@@ -94,6 +112,30 @@ public class UserMdl {
 
 	public Long getId() {
 		return id;
+	}
+
+	public Date getLastLogin() {
+		return lastLogin;
+	}
+
+	public void setLastLogin(Date lastLogin) {
+		this.lastLogin = lastLogin;
+	}
+
+	public String getPasswordConfirm() {
+		return passwordConfirm;
+	}
+
+	public void setPasswordConfirm(String passwordConfirm) {
+		this.passwordConfirm = passwordConfirm;
+	}
+
+	public List<RoleMdl> getRoleMdl() {
+		return roleMdl;
+	}
+
+	public void setRoleMdl(List<RoleMdl> roleMdl) {
+		this.roleMdl = roleMdl;
 	}
 
 	public void setId(Long id) {
@@ -140,13 +182,14 @@ public class UserMdl {
 		this.password = password;
 	}
 
-	public String getConfirm() {
-		return confirm;
-	}
-
-	public void setConfirm(String confirm) {
-		this.confirm = confirm;
-	}
+	// whacked for SpringSec
+//	public String getConfirm() {
+//		return confirm;
+//	}
+//
+//	public void setConfirm(String confirm) {
+//		this.confirm = confirm;
+//	}
 
 	public String getFirstName() {
 		return firstName;

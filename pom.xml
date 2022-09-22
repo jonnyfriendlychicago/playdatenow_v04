@@ -101,10 +101,10 @@
       	
       	<!-- only commentON below if the app is in fact using the full spring security.  Otherwise, the index page/app will behave like demon possession -->
       	
-		<!-- <dependency> origin: https://login.codingdojo.com/m/325/9951/67396
+		<dependency> <!-- origin: https://login.codingdojo.com/m/325/9951/67396 -->
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency> -->
+		</dependency> 
 		
 	</dependencies>
 
