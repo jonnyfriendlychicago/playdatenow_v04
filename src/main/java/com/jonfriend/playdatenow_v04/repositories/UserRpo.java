@@ -11,9 +11,13 @@ import com.jonfriend.playdatenow_v04.models.UserMdl;
 @Repository
 public interface UserRpo extends CrudRepository<UserMdl, Long> {
     
-    Optional<UserMdl> findByEmail(String email);
+//    Optional<UserMdl> findByEmail(String email);
+	// above replaced by below, for SpringSec
+	UserMdl findByEmail(String email);
    
-    Optional<UserMdl> findByUserName(String userName);     // adding to enforce username, too
+//    Optional<UserMdl> findByUserName(String userName);     // adding to enforce username, too
+    // above replaced by below, for SpringSec
+    UserMdl findByUserName(String userName);
     
     List<UserMdl> findAll();
     
