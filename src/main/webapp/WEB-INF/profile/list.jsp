@@ -21,11 +21,8 @@
 
 			</div>
 			<ul class="list-group list-group-flush">
-				<li class="list-group-item">Joined: <fmt:formatDate
-						value="${record.createdAt}" pattern="MMMM" /> <fmt:formatDate
-						value="${record.createdAt}" pattern="yyyy" /></li>
-				<li class="list-group-item"><a class="text-decoration-none"
-					href="/profile/${record.id}">View Full Profile</a></li>
+				<li class="list-group-item">Joined in <fmt:formatDate value="${record.createdAt}" pattern="MMMM" /> <fmt:formatDate value="${record.createdAt}" pattern="yyyy" /></li>
+				<li class="list-group-item"><a class="text-decoration-none" href="/profile/${record.id}">View Full Profile</a></li>
 			</ul>
 		</div>
 	</c:forEach>

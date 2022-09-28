@@ -25,7 +25,9 @@ public class WebSecurityConfig {
 		http.
 	            authorizeRequests()
 //	                .antMatchers("/css/**", "/js/**", "/register").permitAll()
-	                .antMatchers("/css/**", "/js/**", "/register", "/login").permitAll()
+//	                .antMatchers("/css/**", "/js/**", "/register", "/login").permitAll() // this is original link, hacked into below, to allow non-auth access to img folder
+//	                .antMatchers("/css/**", "/js/**", "/img/**", "/register", "/login").permitAll()
+	                .antMatchers("/resources/**", "/static/**", "/webjars/**","/css/**", "/img/**",  "/js/**", "/register", "/login").permitAll() // adding webjars to avoid being redirected to http://localhost:8080/webjars/bootstrap/css/bootstrap.min.css
 //	                .antMatchers("/admin/**").access("hasRole('ADMIN')")
 	                .antMatchers("/admin/**").access("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
 	                .anyRequest().authenticated()

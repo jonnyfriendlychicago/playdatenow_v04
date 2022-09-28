@@ -67,7 +67,7 @@ public class UserSrv{
 //        newUser.setPassword(hashed);
 //    	return userRpo.save(newUser);
 //    }
-//    // begin: legacy register service
+//    // end: legacy register service
     
     public void newUser(
     		UserMdl usermdl

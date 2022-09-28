@@ -14,13 +14,14 @@
   		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   
 		<!-- local css -->
-		<link rel="stylesheet" type="text/css" href="/css/style.css">
+		<!-- <link rel="stylesheet" type="text/css" href="/css/style.css"> -->
 		<!-- local javascript -->
-		<script type ="text/javascript" src="javascript/app.js"></script>
+		<!-- <script type ="text/javascript" src="javascript/app.js"></script> -->
 		<!--  Bootstrap CSS -->
 		<link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css" /> 
 		<!-- For any Bootstrap that uses JS or jQuery-->
 		<!-- JRF: I think this is outdated -->
 		<!-- <script src="/webjars/jquery/jquery.min.js"></script>
 		<script src="/webjars/bootstrap/js/bootstrap.min.js"></script> -->
+
 	</head>

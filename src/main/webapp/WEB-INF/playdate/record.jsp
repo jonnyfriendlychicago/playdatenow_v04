@@ -17,42 +17,31 @@
 	<div class="alert alert-success" role="success">${successMsg}</div>
 </c:if>
 <div id="playdateCard" class="card p-3 d-md-flex justify-content-start">
-	<div id="creationOrganizerButtons"
-		class="d-flex justify-content-between">
+	<div id="creationOrganizerButtons" class="d-flex justify-content-between">
 
 		<div id="creatorOrganizer" class="card p-2 border-0">
 			<p class="m-0 text-secondary" style="font-size: 0.8rem;">
 				Created by
 				<c:choose>
 					<c:when test="${playdate.userMdl.id == authUser.id}">
-										you (${playdate.userMdl.userName})
-										</c:when>
+					you (${playdate.userMdl.userName})
+					</c:when>
 					<c:otherwise>
-										${playdate.userMdl.userName}
-										</c:otherwise>
+					${playdate.userMdl.userName}
+					</c:otherwise>
 				</c:choose>
-				on
-				<fmt:formatDate value="${playdate.createdAt}" pattern="EEEE" />
-				,
-				<fmt:formatDate value="${playdate.createdAt}" pattern="MMMM dd" />
-				,
-				<fmt:formatDate value="${playdate.createdAt}" pattern="yyyy" />
-				,
-				<fmt:formatDate value="${playdate.createdAt}" pattern="h:mm a" />
+				on <fmt:formatDate value="${playdate.createdAt}" pattern="EEEE" />, <fmt:formatDate value="${playdate.createdAt}" pattern="MMMM dd" />, <fmt:formatDate value="${playdate.createdAt}" pattern="yyyy" />, <fmt:formatDate value="${playdate.createdAt}" pattern="h:mm a" />
 			</p>
 			<c:if test="${playdate.userMdl.id == authUser.id}">
-				<p class="m-0 text-secondary">You are the organizer of this
-					event.</p>
+				<p class="m-0 text-secondary">You are the organizer of this event.</p>
 			</c:if>
 		</div>
 		<div>
 			<c:if test="${playdate.userMdl.id == authUser.id}">
-				<a href="/playdate/${playdate.id}/edit"><button
-						class="btn btn-primary mb-2">Edit Playdate</button></a>
+				<a href="/playdate/${playdate.id}/edit"><button class="btn btn-primary mb-2">Edit Playdate</button></a>
 			</c:if>
 		</div>
-	</div>
-	<!-- end creationOrganizerButtons -->
+	</div><!-- end creationOrganizerButtons -->
 
 	<div class="row mt-3">
 		<div id="playdateInfoCol" class="col">
@@ -64,8 +53,7 @@
 
 			<c:if test="${playdate.eventName.length() > 0}">
 				<div class="card p-2 m-0 border-0">
-					<p class="m-0 text-secondary" style="font-size: 0.8rem;">Playdate
-						Name</p>
+					<p class="m-0 text-secondary" style="font-size: 0.8rem;">Playdate Name</p>
 					<p class="m-0" style="font-size: 2rem;">${playdate.eventName}</p>
 				</div>
 			</c:if>
@@ -76,20 +64,14 @@
 			</div>
 
 			<div class="card p-2 border-0">
-				<p class="m-0 text-secondary" style="font-size: 0.8rem;">Event
-					Date</p>
+				<p class="m-0 text-secondary" style="font-size: 0.8rem;">Event Date</p>
 				<p class="m-0">
-					<fmt:formatDate value="${playdate.eventDate}" pattern="EEEE" />
-					,
-					<fmt:formatDate value="${playdate.eventDate}" pattern="MMMM dd" />
-					,
-					<fmt:formatDate value="${playdate.eventDate}" pattern="yyyy" />
+					<fmt:formatDate value="${playdate.eventDate}" pattern="EEEE" />, <fmt:formatDate value="${playdate.eventDate}" pattern="MMMM dd" />, <fmt:formatDate value="${playdate.eventDate}" pattern="yyyy" />
 				</p>
 			</div>
 
 			<div class="card p-2 m-0 border-0">
-				<p class="m-0 text-secondary" style="font-size: 0.8rem;">Start
-					Time</p>
+				<p class="m-0 text-secondary" style="font-size: 0.8rem;">Start Time</p>
 				<p class="m-0">${playdate.startTimeTxt}</p>
 			</div>
 
@@ -113,12 +95,10 @@
 				<p class="m-0 text-secondary" style="font-size: 0.8rem;">Description</p>
 				<pre style="white-space: pre-wrap">${playdate.eventDescription}</pre>
 			</div>
-		</div>
-		<!-- end col -->
+		</div><!-- end playdateInfoCol -->
 
-		<div id="rsvpCol" class="col">
-			<div id="rsvpTrackingCard"
-				class="card p-3 d-md-flex justify-content-start mb-3">
+		<div id="rsvpEtcCol" class="col">
+			<div id="rsvpTrackingCard" class="card p-3 d-md-flex justify-content-start mb-3">
 				<p class="m-0 text-secondary text-center">RSVP Tracking</p>
 				<table class="table table-responsive mt-2 table-borderless table-sm">
 					<thead class="table-light align-top">
@@ -146,22 +126,19 @@
 
 				<c:choose>
 					<c:when test="${authUser.id == playdate.userMdl.id}">
-						<p class="m-0 text-center" style="font-size: 1.25rem;">Your
-							RSVP</p>
+						<p class="m-0 text-center" style="font-size: 1.25rem;">Your RSVP</p>
 						<div class="card p-2 m-0 border-0">
 							<p class="m-0 text-secondary" style="font-size: 0.8rem;">Status</p>
 							<p class="m-0">${playdate.rsvpStatus}</p>
 						</div>
 
 						<div class="card p-2 border-0">
-							<p class="m-0 text-secondary" style="font-size: 0.8rem;"># of
-								Kids</p>
+							<p class="m-0 text-secondary" style="font-size: 0.8rem;"># of Kids</p>
 							<p class="m-0">${playdate.kidCount}</p>
 						</div>
 
 						<div class="card p-2 border-0">
-							<p class="m-0 text-secondary" style="font-size: 0.8rem;"># of
-								Adults</p>
+							<p class="m-0 text-secondary" style="font-size: 0.8rem;"># of Adults</p>
 							<p class="m-0">${playdate.adultCount}</p>
 						</div>
 
@@ -191,14 +168,12 @@
 						</div>
 
 						<div class="card p-2 border-0">
-							<p class="m-0 text-secondary" style="font-size: 0.8rem;"># of
-								Kids</p>
+							<p class="m-0 text-secondary" style="font-size: 0.8rem;"># of Kids</p>
 							<p class="m-0">${rsvpObjForAuthUser.kidCount}</p>
 						</div>
 
 						<div class="card p-2 border-0">
-							<p class="m-0 text-secondary" style="font-size: 0.8rem;"># of
-								Adults</p>
+							<p class="m-0 text-secondary" style="font-size: 0.8rem;"># of Adults</p>
 							<p class="m-0">${rsvpObjForAuthUser.adultCount}</p>
 						</div>
 
@@ -209,34 +184,23 @@
 
 						<div class="card p-2 border-0">
 							<p class="m-0 text-secondary" style="font-size: 0.8rem;">
-								You RSVPed on
-								<fmt:formatDate value="${rsvpObjForAuthUser.createdAt}"
-									pattern="EEEE" />
-								,
-								<fmt:formatDate value="${rsvpObjForAuthUser.createdAt}"
-									pattern="MMMM dd" />
-								,
-								<fmt:formatDate value="${rsvpObjForAuthUser.createdAt}"
-									pattern="yyyy" />
-								,
-								<fmt:formatDate value="${rsvpObjForAuthUser.createdAt}"
-									pattern="h:mm a" />
+								You RSVPed on <fmt:formatDate value="${rsvpObjForAuthUser.createdAt}" pattern="EEEE" />, <fmt:formatDate value="${rsvpObjForAuthUser.createdAt}" pattern="MMMM dd" />, <fmt:formatDate value="${rsvpObjForAuthUser.createdAt}" pattern="yyyy" />, <fmt:formatDate value="${rsvpObjForAuthUser.createdAt}" pattern="h:mm a" />
 							</p>
 						</div>
 
 					</c:when>
 					<c:otherwise>
-						<div
-							class="card p-2 border-0 d-md-flex justify-content-center bg-light mb-2">
-							<p class="m-0 text-center text-secondary">You have not yet
-								RSVPed for this event.</p>
+						<div class="card p-2 border-0 d-md-flex justify-content-center bg-light mb-2">
+							<p class="m-0 text-center text-secondary">You have not yet RSVPed for this event.</p>
 						</div>
 
 						<form:form action='/playdate/${playdate.id}/rsvp/create'
 							method='post' modelAttribute='rsvp'>
 							<div class="form-floating mb-3">
-								<form:select path="rsvpStatus" class="form-control"
-									id="rsvpStatus" placeholder="rsvpStatus">
+								<form:select 
+								path="rsvpStatus" 
+								class="form-control"
+								id="rsvpStatus" placeholder="rsvpStatus">
 									<form:option value="In" path="rsvpStatus">In</form:option>
 									<form:option value="Maybe" path="rsvpStatus">Maybe</form:option>
 									<form:option value="Out" path="rsvpStatus">Out</form:option>
@@ -245,44 +209,55 @@
 							</div>
 
 							<div class="form-floating mb-3">
-								<form:input path="kidCount" type="number" class="form-control"
-									id="kidCount" placeholder="kidCount" min="1" step="1" value="1" />
+								<form:input 
+									path="kidCount" 
+									type="number" 
+									class="form-control"
+									id="kidCount" 
+									placeholder="kidCount" 
+									min="1" 
+									step="1" 
+									value="1" />
 								<form:label path="kidCount" for="kidCount"># of Kids</form:label>
-								<p class="text-danger">
-									<form:errors path="kidCount" />
+								<p class="text-danger"><form:errors path="kidCount" />
 							</div>
 
 							<div class="form-floating mb-3">
-								<form:input path="adultCount" type="number" class="form-control"
-									id="adultCount" placeholder="adultCount" min="1" step="1"
+								<form:input 
+									path="adultCount" 
+									type="number" 
+									class="form-control"
+									id="adultCount" 
+									placeholder="adultCount" 
+									min="1" 
+									step="1"
 									value="1" />
 								<form:label path="adultCount" for="adultCount"># of Adults</form:label>
-								<p class="text-danger">
-									<form:errors path="adultCount" />
+								<p class="text-danger"><form:errors path="adultCount" />
 							</div>
 
 							<div class="form-floating mb-3">
-								<form:textarea path="comment" type="text" class="form-control"
-									id="comment" placeholder="comment" style="height: 10rem;" />
+								<form:textarea 
+									path="comment" 
+									type="text" 
+									class="form-control"
+									id="comment" 
+									placeholder="comment" 
+									style="height: 10rem;" />
 								<form:label path="comment" for="comment">Comment</form:label>
-								<p class="text-danger">
-									<form:errors path="comment" />
+								<p class="text-danger"><form:errors path="comment" />
 							</div>
 
 							<div>
-								<button type="submit" class="btn btn-primary w-100">Save
-									My Rsvp</button>
+								<button type="submit" class="btn btn-primary w-100">Save My Rsvp</button>
 							</div>
 						</form:form>
 
 					</c:otherwise>
 				</c:choose>
-			</div>
-			<!-- end rsvpCard -->
-		</div>
-		<!-- end col -->
-	</div>
-	<!-- end row -->
+			</div> <!-- end rsvpCard -->
+		</div><!-- end col -->
+	</div><!-- end row -->
 
 	<div id="rsvpListRow" class="row m-1">
 

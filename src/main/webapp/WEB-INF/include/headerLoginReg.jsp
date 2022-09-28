@@ -5,7 +5,7 @@
     <div class="container-fluid">
       
       <a class="navbar-brand" href="/playdate">
-      	<img src="/img/pdnWhiteLogoNoBg.png" alt="mdo" height="32" >
+      	<img src="/img/pdnWhiteLogoNoBg.png" alt="playDateNOW logo" height="32" > 
       </a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample03" aria-controls="navbarsExample03" aria-expanded="false" aria-label="Toggle navigation">
