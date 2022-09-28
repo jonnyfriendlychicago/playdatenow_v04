@@ -10,7 +10,7 @@
       <a class="navbar-brand" href="/playdate">
       	<!-- <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle"> -->
       	<!-- <img src="/img/pdnWhiteLogoNoBg.png" alt="mdo" width="32" height="32" class="rounded-circle"> -->
-      	<img src="/img/pdnWhiteLogoNoBg.png" alt="mdo" height="32" >
+      	<img src="/img/pdnWhiteLogoNoBg.png" alt="playDateNOW logo all pages" height="32" >
       </a>
       
       
@@ -75,11 +75,18 @@
 		</div> -->
 		
 		   <div class="nav-item dropdown ml-0">
-            <a class="nav-link dropdown-toggle text-light" href="#" data-bs-toggle="dropdown" aria-expanded="false">${authUser.userName}</a>
+            <%-- <a class="nav-link dropdown-toggle text-light" href="#" data-bs-toggle="dropdown" aria-expanded="false">${authUser.userName}</a> --%>
+            <a class="nav-link dropdown-toggle text-light" href="#" data-bs-toggle="dropdown" aria-expanded="false">${authUserName}</a>
             <ul class="dropdown-menu dropdown-menu-lg-end">
-              <li><a class="dropdown-item" href="/profile/${authUser.id}">Profile</a></li>
+              	<li><a class="dropdown-item" href="/profile/${authUser.id}">Profile</a></li>
 				<li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="/logout">Log out</a></li>
+              	<li>
+              	<!-- 	<a class="dropdown-item" href="/logout">Log out</a> -->
+		          	<form id="logoutForm" method="POST" action="/logout">
+						<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+						<button type="submit" class="btn btn-light">Signout</button>
+					</form>
+              	</li>
             </ul>
           </div>
 		        

@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Date;
 //import java.util.ArrayList;
 //import java.util.HashMap;
 import java.util.List;
@@ -110,7 +111,8 @@ public class IndexhomeprofileCtl {
   		) {
 
   	if (isAuthenticated()) {
-          return "redirect:/";
+//          return "redirect:/"; // let's get back to this
+          return "redirect:/playdate";
       }
   	
   	if(error != null) {
@@ -196,7 +198,8 @@ public class IndexhomeprofileCtl {
         
         // Log in new user with the password we stored before encrypting it.  NOTE: the method listed immed below is built right after this mthd concludes
      	authWithHttpServletRequest(request, userMdl.getEmail(), password);
-     		return "redirect:/";
+//     		return "redirect:/"; // let's get bck to this
+     		return "redirect:/playdate";
      	}
     
     // We call this new method below to automatically log in newly registered users
@@ -271,10 +274,15 @@ public class IndexhomeprofileCtl {
     		, Model model
     		) {    	
          
-        String email = principal.getName();
-		UserMdl userMdl = userSrv.findByEmail(email);
-		model.addAttribute("authUser", userMdl);
-		
+//        String email = principal.getName();
+//		UserMdl userMdl = userSrv.findByEmail(email);
+//		model.addAttribute("authUser", userMdl);
+    	// above replaced by below
+    	
+    	// authentication boilerplate for all mthd
+		UserMdl authUserObj = userSrv.findByEmail(principal.getName());
+		model.addAttribute("authUser", authUserObj);
+		model.addAttribute("authUserName", authUserObj.getUserName()); // set the "as-is" username, so it can be statically posted to the top right nav bar
 		
 		// JRF temporarily removing below: updating last login and substituting admin.jsp for home is not desired
 //		if(userMdl!=null) {
@@ -289,7 +297,8 @@ public class IndexhomeprofileCtl {
 //			// All other users are redirected to the home page
 //		}
 		
-        return "home.jsp";
+        return "home.jsp"; // come back and make this work later
+//        return "playdate/list.jsp"; 
     }
     
     // JRF temporarily disabling this whole admin program
@@ -327,17 +336,24 @@ public class IndexhomeprofileCtl {
 //		return "redirect:/admin";
 //	}
     
-	// view all profile -- REFACTOR!!!!1
+	// view all profile 
 	@GetMapping("/profile")
 	public String showAllprofile(
 			Model model
-			, HttpSession session
+//			, HttpSession session
+			, Principal principal
 			) {
 		
-		// log out the unauth / deliver the auth use data
-		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
-		Long authenticatedUserId = (Long) session.getAttribute("userId");
-		model.addAttribute("authUser", userSrv.findById(authenticatedUserId));
+//		// log out the unauth / deliver the auth use data
+//		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
+//		Long authenticatedUserId = (Long) session.getAttribute("userId");
+//		model.addAttribute("authUser", userSrv.findById(authenticatedUserId));
+		
+		// above replaced by below
+    	// authentication boilerplate for all mthd
+		UserMdl authUserObj = userSrv.findByEmail(principal.getName());
+		model.addAttribute("authUser", authUserObj);
+		model.addAttribute("authUserName", authUserObj.getUserName()); // set the "as-is" username, so it can be statically posted to the top right nav bar
 		
 		List<UserMdl> profileList = userSrv.returnAll();
 		model.addAttribute("profileList", profileList);
@@ -382,15 +398,20 @@ public class IndexhomeprofileCtl {
     		, Principal principal
     		, Model model
     		) {    	
-         
-        String email = principal.getName();
-		UserMdl userMdl = userSrv.findByEmail(email);
-		model.addAttribute("authUser", userMdl);
-		
-		// grab the entire user object using the url parameter, then deliver to page
-		UserMdl userObj = userSrv.findById(userProfileId);
-		model.addAttribute("userProfile", userObj); 
+    	
+//    	String authUserEmail = principal.getName();
+//		UserMdl authUserObj = userSrv.findByEmail(authUserEmail);
+//		model.addAttribute("authUser", authUserObj);
+//		String authUserEmail = principal.getName();
+    	
+		// authentication boilerplate for all mthd
+		UserMdl authUserObj = userSrv.findByEmail(principal.getName());
+		model.addAttribute("authUser", authUserObj);
+		model.addAttribute("authUserName", authUserObj.getUserName()); // set the "as-is" username, so it can be statically posted to the top right nav bar
 
+		// grab the entire user object using the url parameter, then deliver to page
+		model.addAttribute("userProfile", userSrv.findById(userProfileId)); 
+		
 		return "profile/record.jsp";
     }
 	
@@ -474,39 +495,44 @@ public class IndexhomeprofileCtl {
 	// display edit page
 	@GetMapping("/profile/{id}/edit")
 	public String editProfile(
-//			@ModelAttribute("userProfileTobe") UserupdateMdl userupdateObj
-			@ModelAttribute("userProfileTobe") UserUpdateDto userupdateObj
+			@ModelAttribute("userProfileTobe") UserUpdateDto userUpdateObj
 			, @PathVariable("id") Long userProfileId
 			, Model model
 //			, HttpSession session
 			, Principal principal
 			) {
-		
-		// log out the unauth / deliver the auth use data
-//		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
-//		Long userId = (Long) session.getAttribute("userId");
-//		model.addAttribute("authUser", userSrv.findById(userId)); 
-		// above replaced by below
-		String email = principal.getName();
-		UserMdl userMdl = userSrv.findByEmail(email);
-		model.addAttribute("authUser", userMdl);
 
-		// (1) acquire as-is object/values from db
-		UserMdl userObj = userSrv.findById(userProfileId); 
+//		String authUserEmail = principal.getName();
+//		UserMdl authUserObj = userSrv.findByEmail(authUserEmail);
+//		model.addAttribute("authUser", authUserObj);
 		
-		// (2) Populate the initially-empty userupdateObj (being sent to the form) with the values from the existing record
-		userupdateObj.setAboutMe(userObj.getAboutMe()); 
-		userupdateObj.setLastName(userObj.getLastName()); 
-		userupdateObj.setUserName(userObj.getUserName()); 
-		userupdateObj.setEmail(userObj.getEmail()); 
-		userupdateObj.setFirstName(userObj.getFirstName()); 
-		userupdateObj.setCity(userObj.getCity()); 
-		userupdateObj.setZipCode(userObj.getZipCode()); 
-		
-		// (3) not related to above, but easily confused: 
-		
-		model.addAttribute("userProfile", userObj); // send the as-is object to the page, so static values can be used (createdAt, Id, etc.)
+		// authentication boilerplate for all mthd
+		UserMdl authUserObj = userSrv.findByEmail(principal.getName());
+		model.addAttribute("authUser", authUserObj);
+		model.addAttribute("authUserName", authUserObj.getUserName()); // set the "as-is" username, so it can be statically posted to the top right nav bar
 
+		// (1) get these values from the db, so they can be delivered as addAtt independent of obj that's in flux
+		String authUserName = authUserObj.getUserName(); 
+		Date userProfileCreatedAt = authUserObj.getCreatedAt(); 
+		
+		// (2) acquire as-is object/values from db
+		UserMdl userProfileObj = userSrv.findById(userProfileId); 
+		
+		// (3) Populate the initially-empty userupdateObj (being sent to the form) with the values from the existing record
+		userUpdateObj.setUserName(userProfileObj.getUserName()); 
+		userUpdateObj.setEmail(userProfileObj.getEmail()); 
+		userUpdateObj.setFirstName(userProfileObj.getFirstName()); 
+		userUpdateObj.setLastName(userProfileObj.getLastName()); 
+		userUpdateObj.setAboutMe(userProfileObj.getAboutMe()); 
+		userUpdateObj.setCity(userProfileObj.getCity()); 
+		userUpdateObj.setZipCode(userProfileObj.getZipCode()); 
+		
+		// (4) send the as-is object to the page, so static values can be used (createdAt, Id, etc.)
+		model.addAttribute("userProfile", userProfileObj); // send the as-is object to the page, so static values can be used (createdAt, Id, etc.)
+		model.addAttribute("userProfileId", userProfileId); 
+		model.addAttribute("authUserName", authUserName); // set the "as-is" username, so it can be statically posted to the top right nav bar
+		model.addAttribute("userProfileCreatedAt", userProfileCreatedAt);
+		
 		return "profile/edit.jsp";
 	}
 	
@@ -514,8 +540,7 @@ public class IndexhomeprofileCtl {
 	@PostMapping("/profile/edit")
 	public String PostTheEditProfile(
 			@Valid 
-//			@ModelAttribute("userProfileTobe") UserupdateMdl userupdateObj
-			@ModelAttribute("userProfileTobe") UserUpdateDto userupdateObj
+			@ModelAttribute("userProfileTobe") UserUpdateDto userUpdateObj
 			, BindingResult result
 			, Model model
 //			, HttpSession session
@@ -523,34 +548,46 @@ public class IndexhomeprofileCtl {
 			, RedirectAttributes redirectAttributes
 			) {
 		
-		String email = principal.getName();
-		UserMdl userMdl = userSrv.findByEmail(email);
-		model.addAttribute("authUser", userMdl);
+		// authentication boilerplate for all mthd
+		UserMdl authUserObj = userSrv.findByEmail(principal.getName());
+		model.addAttribute("authUser", authUserObj);
+		model.addAttribute("authUserName", authUserObj.getUserName()); // set the "as-is" username, so it can be statically posted to the top right nav bar
 		
-		Long authenticatedUserId = userMdl.getId(); 
-		
-		// (1) acquire as-is object/values from db (as you did in the display mthd)
-		UserMdl userObj = userSrv.findById(authenticatedUserId); //  gets the userModel object by calling the user service with the session user id
-		
+													//		// (1) acquire as-is object/values from db (as you did in the display mthd)
+													//		UserMdl userObj = userSrv.findById(authenticatedUserId); //  gets the userModel object by calling the user service with the session user id
+		// (1) get these values from the db, so they can be delivered as addAtt independent of obj that's in flux
+		Long userProfileId = authUserObj.getId(); 
+		String authUserName = authUserObj.getUserName(); 
+		Date userProfileCreatedAt = authUserObj.getCreatedAt(); 
+
 		// (2) overwrite the targeted fields in the userObj with values from the userupdateObj
+		authUserObj.setUserName(userUpdateObj.getUserName()); 
 //		userObj.setEmail(userupdateObj.getEmail()); // this line shall be enabled, once we figure out how to update the authentication object to contain the updated email addy
-		userObj.setUserName(userupdateObj.getUserName()); 
-		userObj.setFirstName(userupdateObj.getFirstName() ); 
-		userObj.setLastName(userupdateObj.getLastName() ); 
-		
-		userObj.setAboutMe(userupdateObj.getAboutMe() ); 
-		userObj.setCity(userupdateObj.getCity() );  
-		userObj.setZipCode(userupdateObj.getZipCode() ); 
+		authUserObj.setFirstName(userUpdateObj.getFirstName() ); 
+		authUserObj.setLastName(userUpdateObj.getLastName() ); 
+		authUserObj.setAboutMe(userUpdateObj.getAboutMe() ); 
+		authUserObj.setCity(userUpdateObj.getCity() );  
+		authUserObj.setZipCode(userUpdateObj.getZipCode() ); 
 		
 		// (3) run the service to save the updated object
-		userSrv.updateUserProfile(userObj, result);
+		userSrv.updateUserProfile(authUserObj, result);
 		
 		if (result.hasErrors() ) { 
-			model.addAttribute("userProfile", userObj); // send the as-is object to the page, so static values can be used (createdAt, Id, etc.)
+//			model.addAttribute("authUser", authUserObj);
+//			model.addAttribute("userProfile", authUserObj); // send the as-is object to the page, so static values can be used (createdAt, Id, etc.)
+			// above replaced by below
+//			model.addAttribute("authUser", authUserObj);
+			model.addAttribute("userProfileId", userProfileId); 
+			model.addAttribute("authUserName", authUserName); // set the "as-is" username, so it can be statically posted to the top right nav bar
+			model.addAttribute("userProfileCreatedAt", userProfileCreatedAt);
+
+							//			String userName = authUserObj.getUserName(); 
+							//			System.out.println("userName: " + userName); 
 			return "profile/edit.jsp";
+		
 		} else {
-			System.out.println("email: " + email); 
-			System.out.println("userMdl: " + userMdl);
+//			System.out.println("email: " + email); 
+//			System.out.println("userMdl: " + userMdl);
 			
 //			https://stackoverflow.com/questions/14010326/how-to-change-the-login-name-for-the-current-user-with-spring-security-3-1
 //			Authentication request = new UsernamePasswordAuthenticationToken(userMdl.getEmail(), password);
@@ -561,8 +598,8 @@ public class IndexhomeprofileCtl {
 //			Authentication authentication = new UsernamePasswordAuthenticationToken(userObject, userObject.getPassword(), userObject.getAuthorities());
 //			SecurityContextHolder.getContext().setAuthentication(authentication);
 
-//			return "redirect:/profile/" + userObj.getId(); 
-			return "redirect:/"; 
+			return "redirect:/profile/" + authUserObj.getId(); 
+//			return "redirect:/"; 
 		}
 	}
 	

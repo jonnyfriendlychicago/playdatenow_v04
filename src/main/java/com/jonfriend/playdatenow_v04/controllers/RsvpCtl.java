@@ -1,5 +1,6 @@
 package com.jonfriend.playdatenow_v04.controllers;
 
+import java.security.Principal;
 import java.util.Date;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.jonfriend.playdatenow_v04.models.RsvpMdl;
 import com.jonfriend.playdatenow_v04.models.PlaydateMdl;
@@ -44,13 +46,19 @@ public class RsvpCtl {
 			, @Valid @ModelAttribute("rsvp") RsvpMdl rsvpMdl
 			, BindingResult result
 			, Model model
-			, HttpSession session
+//			, HttpSession session
+			, Principal principal // added for spring
 			) {
 		
-		// log out the unauth / deliver the auth use data
-		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
-		Long authenticatedUserId = (Long) session.getAttribute("userId");
-		model.addAttribute("authUser", userSrv.findById(authenticatedUserId));
+//		// log out the unauth / deliver the auth use data
+//		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
+//		Long authenticatedUserId = (Long) session.getAttribute("userId");
+//		model.addAttribute("authUser", userSrv.findById(authenticatedUserId));
+		// above replaced by below
+    	// authentication boilerplate for all mthd
+		UserMdl authUserObj = userSrv.findByEmail(principal.getName());
+		model.addAttribute("authUser", authUserObj);
+		model.addAttribute("authUserName", authUserObj.getUserName()); // set the "as-is" username, so it can be statically posted to the top right nav bar
 		
 		PlaydateMdl playdateObj = playdateSrv.findById(playdateId);  // gets us the playdate object by using incoming path variable
 		
@@ -61,12 +69,15 @@ public class RsvpCtl {
 			
 			// note: JRF not sure (2022-09-13) why this approach (using 'newOtc' object/etc.) is necessary here, but I do know from earlier testing that the create/validate/etc. won't workw with the reg approach
 			// first... get current user whole object, for infusion into rsvp record
-			UserMdl currentUserMdl = userSrv.findById(authenticatedUserId); 
+//			UserMdl currentUserMdl = userSrv.findById(authenticatedUserId); 
+			// line above no longer needed with spring security
 			
 			// next, instantiate the new object
 			RsvpMdl newOtc = new RsvpMdl(); // ... and then: infuse into that object all the values from the incoming model/form
 			newOtc.setPlaydateMdl(playdateObj); // parent record
-			newOtc.setUserMdl(currentUserMdl); // user that is creating it
+//			newOtc.setUserMdl(currentUserMdl); // user that is creating it
+			// above replaced by below
+			newOtc.setUserMdl(authUserObj); // user that is creating it
 			newOtc.setRsvpStatus(rsvpMdl.getRsvpStatus()); 
 			newOtc.setKidCount(rsvpMdl.getKidCount()); 
 			newOtc.setAdultCount(rsvpMdl.getAdultCount()); 
@@ -84,13 +95,19 @@ public class RsvpCtl {
 			@PathVariable("playdateId") Long playdateId
 			, @PathVariable("rsvpId") Long rsvpId
 			, Model model
-			, HttpSession session
+//			, HttpSession session
+			, Principal principal // added for spring
 			) {
 		
-		// log out the unauth / deliver the auth user data
-		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
-		Long authenticatedUserId = (Long) session.getAttribute("userId");
-		model.addAttribute("authUser", userSrv.findById(authenticatedUserId));
+//		// log out the unauth / deliver the auth user data
+//		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
+//		Long authenticatedUserId = (Long) session.getAttribute("userId");
+//		model.addAttribute("authUser", userSrv.findById(authenticatedUserId));
+		// above replaced by below
+    	// authentication boilerplate for all mthd
+		UserMdl authUserObj = userSrv.findByEmail(principal.getName());
+		model.addAttribute("authUser", authUserObj);
+		model.addAttribute("authUserName", authUserObj.getUserName()); // set the "as-is" username, so it can be statically posted to the top right nav bar
 		
 		RsvpMdl rsvpObj = rsvpSrv.findById(rsvpId); // get the object that is the primary object displayed on this page
 		model.addAttribute("rsvp", rsvpObj); // deliver the object that is the primary object on this page
@@ -153,15 +170,21 @@ public class RsvpCtl {
 			@Valid @ModelAttribute("rsvp") RsvpMdl rsvpMdl
 			, BindingResult result
 			, Model model
-			, HttpSession session
+//			, HttpSession session
+			, Principal principal // added for spring
 			, RedirectAttributes redirectAttributes
 			) {
 		
 		// log out the unauth / deliver the auth use data
-		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
-		Long authenticatedUserId = (Long) session.getAttribute("userId");
-		model.addAttribute("authUser", userSrv.findById(authenticatedUserId));
-		UserMdl currentUserMdl = userSrv.findById(authenticatedUserId); //  gets the userModel object by calling the user service with the session user id
+//		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
+//		Long authenticatedUserId = (Long) session.getAttribute("userId");
+//		model.addAttribute("authUser", userSrv.findById(authenticatedUserId));
+//		UserMdl currentUserMdl = userSrv.findById(authenticatedUserId); //  gets the userModel object by calling the user service with the session user id
+		// above replaced by below
+    	// authentication boilerplate for all mthd
+		UserMdl authUserObj = userSrv.findByEmail(principal.getName());
+		model.addAttribute("authUser", authUserObj);
+		model.addAttribute("authUserName", authUserObj.getUserName()); // set the "as-is" username, so it can be statically posted to the top right nav bar
 		 
 		RsvpMdl rsvpObj = rsvpSrv.findById(rsvpMdl.getId()); // below now setting up rthe rsvp object by using the getID on the modAtt thing.
 		PlaydateMdl playdateObj = rsvpObj.getPlaydateMdl(); // get the object that is the parent to the primary object
@@ -174,12 +197,12 @@ public class RsvpCtl {
 		
 		UserMdl rsvpCreatorUserMdl = rsvpObj.getUserMdl();   // gets the userMdl obj saved to the existing playdateObj
 		
-		if(!currentUserMdl.equals(rsvpCreatorUserMdl)) {
-			redirectAttributes.addFlashAttribute("permissionErrorMsg", "That RSVP can only be edited by its creator.  Any edits just attempted were discarded.");
+		if(!authUserObj.equals(rsvpCreatorUserMdl)) {
+			redirectAttributes.addFlashAttribute("permissionErrorMsg", "That RSVP can only be edited by its creator.  Any edits just attempted have been discarded.");
 			return "redirect:/playdate/" + playdateObj.getId();
 		}
 		
-		if(result.hasErrors()) {
+		if(result.hasErrors()) { // examples of errors: submit with null kidsCount, etc.
 			// begin: calculate various RSVP-related stats.  NOTE: this all could be done with native queries as well, but this is good function/loop practice.  
 			List<RsvpMdl> rsvpList = rsvpSrv.returnAllRsvpForPlaydate(playdateObj); // list of rsvps, which we will use downstream
 			Integer rsvpCount = 0; 							// instantiate the java variable that we will update in the loop
@@ -233,25 +256,102 @@ public class RsvpCtl {
 		}
 	} 
 	
+	// below is delete mthd before spring security; frozen. 
+//	// delete rsvp
+//    @DeleteMapping("/rsvp/{id}")
+//    public String deleteRsvp(
+//    		@PathVariable("id") Long rsvpId
+//    		, HttpSession session
+//    		, RedirectAttributes redirectAttributes
+//    		) {
+//		// If no userId is found in session, redirect to logout.  JRF: put this on basically all methods now, except the login/reg pages
+//		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
+//		Long authenticatedUserId = (Long) session.getAttribute("userId");
+//
+//		RsvpMdl rsvpObj = rsvpSrv.findById(rsvpId);
+//		PlaydateMdl playdateObj = rsvpObj.getPlaydateMdl(); 
+//		Long playdateID = playdateObj.getId(); 
+//		
+//		UserMdl currentUserMdl = userSrv.findById(authenticatedUserId); //  gets the userModel object by calling the user service with the session user id
+//		UserMdl rsvpCreatorUserMdl = rsvpObj.getUserMdl();   // gets the userMdl obj saved to the existing playdateObj
+//		
+//		if(!currentUserMdl.equals(rsvpCreatorUserMdl)) {
+//			redirectAttributes.addFlashAttribute("permissionErrorMsg", "That RSVP can only be deleted by its creator.  RSVP not deleted.");
+//			return "redirect:/playdate/" + playdateObj.getId();
+//		}
+//
+//		rsvpSrv.delete(rsvpObj);
+//        return "redirect:/playdate/" + playdateID;
+//    }
+	
+	// below is the deleteMapping method which should work.... but won't.  replaced by wholly new approach that follows
+//	// delete rsvp
+//    @DeleteMapping("/rsvp/{id}")
+//    public String deleteRsvp(
+//    		@PathVariable("id") Long rsvpId
+////    		, HttpSession session
+//			, Principal principal // added for spring
+//    		, RedirectAttributes redirectAttributes
+//    		) {
+////		// If no userId is found in session, redirect to logout.  JRF: put this on basically all methods now, except the login/reg pages
+////		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
+////		Long authenticatedUserId = (Long) session.getAttribute("userId");
+//    	
+//		// above replaced by below
+//    	// authentication boilerplate for all mthd
+//		UserMdl authUserObj = userSrv.findByEmail(principal.getName());
+////		model.addAttribute("authUser", authUserObj);
+////		model.addAttribute("authUserName", authUserObj.getUserName()); // set the "as-is" username, so it can be statically posted to the top right nav bar
+//
+//		RsvpMdl rsvpObj = rsvpSrv.findById(rsvpId);
+//		PlaydateMdl playdateObj = rsvpObj.getPlaydateMdl(); 
+//		Long playdateID = playdateObj.getId(); 
+//		
+////		UserMdl currentUserMdl = userSrv.findById(authenticatedUserId); //  gets the userModel object by calling the user service with the session user id
+//		// above no longer needed
+//		UserMdl rsvpCreatorUserMdl = rsvpObj.getUserMdl();   // gets the userMdl obj saved to the existing playdateObj
+//		
+////		if(!currentUserMdl.equals(rsvpCreatorUserMdl)) {
+//		// above replaced by below
+//		if(!authUserObj.equals(rsvpCreatorUserMdl)) {
+//			redirectAttributes.addFlashAttribute("permissionErrorMsg", "That RSVP can only be deleted by its creator.  RSVP not deleted.");
+//			return "redirect:/playdate/" + playdateObj.getId();
+//		}
+//
+//		rsvpSrv.delete(rsvpObj);
+//        return "redirect:/playdate/" + playdateID;
+//    }
+	
 	// delete rsvp
-    @DeleteMapping("/rsvp/{id}")
+//    @DeleteMapping("/rsvp/{id}")
+	@RequestMapping("/rsvp/delete/{id}")
     public String deleteRsvp(
     		@PathVariable("id") Long rsvpId
-    		, HttpSession session
+//    		, HttpSession session
+			, Principal principal // added for spring
     		, RedirectAttributes redirectAttributes
     		) {
-		// If no userId is found in session, redirect to logout.  JRF: put this on basically all methods now, except the login/reg pages
-		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
-		Long authenticatedUserId = (Long) session.getAttribute("userId");
+//		// If no userId is found in session, redirect to logout.  JRF: put this on basically all methods now, except the login/reg pages
+//		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
+//		Long authenticatedUserId = (Long) session.getAttribute("userId");
+    	
+		// above replaced by below
+    	// authentication boilerplate for all mthd
+		UserMdl authUserObj = userSrv.findByEmail(principal.getName());
+//		model.addAttribute("authUser", authUserObj);
+//		model.addAttribute("authUserName", authUserObj.getUserName()); // set the "as-is" username, so it can be statically posted to the top right nav bar
 
 		RsvpMdl rsvpObj = rsvpSrv.findById(rsvpId);
 		PlaydateMdl playdateObj = rsvpObj.getPlaydateMdl(); 
 		Long playdateID = playdateObj.getId(); 
 		
-		UserMdl currentUserMdl = userSrv.findById(authenticatedUserId); //  gets the userModel object by calling the user service with the session user id
+//		UserMdl currentUserMdl = userSrv.findById(authenticatedUserId); //  gets the userModel object by calling the user service with the session user id
+		// above no longer needed
 		UserMdl rsvpCreatorUserMdl = rsvpObj.getUserMdl();   // gets the userMdl obj saved to the existing playdateObj
 		
-		if(!currentUserMdl.equals(rsvpCreatorUserMdl)) {
+//		if(!currentUserMdl.equals(rsvpCreatorUserMdl)) {
+		// above replaced by below
+		if(!authUserObj.equals(rsvpCreatorUserMdl)) {
 			redirectAttributes.addFlashAttribute("permissionErrorMsg", "That RSVP can only be deleted by its creator.  RSVP not deleted.");
 			return "redirect:/playdate/" + playdateObj.getId();
 		}
@@ -259,5 +359,6 @@ public class RsvpCtl {
 		rsvpSrv.delete(rsvpObj);
         return "redirect:/playdate/" + playdateID;
     }
+    
 // end of methods
 }

@@ -13,8 +13,7 @@
 		${permissionErrorMsg}</div>
 </c:if>
 
-<div id="profileCard"
-	class="card p-3 d-md-flex justify-content-start mt-3">
+<div id="profileCard" class="card p-3 d-md-flex justify-content-start mt-3">
 	<div class="d-flex justify-content-between">
 		<div class="card p-2 border-0">
 			<p class="m-0 text-secondary" style="font-size: 0.8rem;">
@@ -23,8 +22,7 @@
 		</div>
 		<div>
 			<c:if test="${userProfile.id == authUser.id}">
-				<a href="/profile/${userProfile.id}/edit"><button
-						class="btn btn-primary mb-2">Edit</button></a>
+				<a href="/profile/${userProfile.id}/edit"><button class="btn btn-primary mb-2">Edit</button></a>
 			</c:if>
 		</div>
 	</div>
@@ -40,8 +38,7 @@
 	</div>
 
 	<div class="card p-2 border-0">
-		<p class="m-0 text-secondary" style="font-size: 0.8rem;">First
-			name</p>
+		<p class="m-0 text-secondary" style="font-size: 0.8rem;">First name</p>
 		<p class="m-0">${userProfile.firstName}</p>
 	</div>
 
@@ -57,7 +54,7 @@
 
 	<div class="card p-2 border-0">
 		<p class="m-0 text-secondary" style="font-size: 0.8rem;">Location</p>
-		<p class="m-0">${userProfile.city}-- ${userProfile.zipCode}</p>
+		<p class="m-0">${userProfile.city} -- ${userProfile.zipCode}</p>
 	</div>
 
 </div>
