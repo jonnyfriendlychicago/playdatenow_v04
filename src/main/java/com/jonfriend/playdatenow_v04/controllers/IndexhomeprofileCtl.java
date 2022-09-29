@@ -21,7 +21,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+//import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller; 
@@ -46,14 +46,15 @@ public class IndexhomeprofileCtl {
 	
 	@Autowired
 	private UserSrv userSrv;
-	
-//	@Autowired
-//	private PlaydateSrv playdateSrv;
-	
-	// begin ssp
+
 	@Autowired
 	private UserValidator userValidator;
 	
+// ********************************************************************
+// AUTHENTICATION METHODS
+// ********************************************************************
+	
+	// boolean used by /login
 	private boolean isAuthenticated() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication == null || AnonymousAuthenticationToken.class.
@@ -62,112 +63,40 @@ public class IndexhomeprofileCtl {
 		}
 		return authentication.isAuthenticated();
 	}
-	// end ssp
-	 
-// ********************************************************************
-// AUTHENTICATION METHODS
-// ********************************************************************
 	
-//	// begin: legacy login 
-//	@GetMapping("/")
-//	public String index(
-//			Model model
-//			, HttpSession session) {
-//		
-//		if(session.getAttribute("userId") != null) {return "redirect:/home";} // *** Redirect authorized users to the /home METHOD -- DON'T EXPOSE REG/LOGIN index page TO ALREADY AUTH'ED USERS ***
-//		model.addAttribute("newLogin", new LoginUserMdl()); // putting a new empty LoginUserMdl obj on the index page,
-//		return "index.jsp"; 
-//	}
-// 
-//    @PostMapping("/login")
-//    public String login(
-//    		@Valid @ModelAttribute("newLogin") LoginUserMdl newLogin
-//    		, BindingResult result
-//    		, Model model
-//    		, HttpSession session
-//    		) {
-//    	
-//    	UserMdl user = userSrv.login(newLogin, result);
-//    	
-//        if(result.hasErrors() || user==null ) // user==null is the equiv of "user name not found!"
-//        {
-//        	model.addAttribute("newUser", new UserMdl()); //deliver the empty UserMdl object before re-rendering the reg/login page; the LoginUserMdl obj will maintain the incoming values to this method
-//        	model.addAttribute("validationErrorMsg", "Login errors.  See details in form below and try again.");
-//            return "index.jsp";
-//        }
-//    
-//        session.setAttribute("userId", user.getId()); // No errors?  Store the ID from the DB in session.
-//	    return "redirect:/playdate"; // redirecting here to playdate for now, b/c insuff time to build out dashboard/home-style page
-//    }
-//    // end: legacy login
-	
-  @GetMapping("/login")
-  public String login(
-  		@ModelAttribute("user") UserMdl userMdl,
-  		// jrf: above from platform, but since we have sep log and user pages, I dont' think above is needed here, b/c it's only for register
-  		@RequestParam(value="error", required=false) String error, 
-  		@RequestParam(value="logout", required=false) String logout, 
-  		Model model
-  		) {
-
-  	if (isAuthenticated()) {
-//          return "redirect:/"; // let's get back to this
-          return "redirect:/playdate";
-      }
+	@GetMapping("/login")
+	public String login(
+			@ModelAttribute("user") UserMdl userMdl
+			, @RequestParam(value="error", required=false) String error
+			, @RequestParam(value="logout", required=false) String logout
+			, Model model
+			) {
+		
+		if (isAuthenticated()) {
+			return "redirect:/playdate";
+		}
   	
-  	if(error != null) {
+		if(error != null) {
           model.addAttribute("errorMessage", "Invalid Credentials, Please try again.");
-      }
-      if(logout != null) {
+		}
+      
+		if(logout != null) {
           model.addAttribute("logoutMessage", "Logout Successful.");
-      }
-      return "login.jsp";
-  }
+		}
+      
+		return "login.jsp";
+	}
     
-//    // begin: legacy register
-//	@GetMapping("/register")
-//	public String register(
-//			Model model
-//			, HttpSession session) {
-//		
-//		if(session.getAttribute("userId") != null) {return "redirect:/home";} // redirect authorized users to the /home METHOD; don't expose the index page to already-authenticated users
-//        model.addAttribute("newUser", new UserMdl()); // login/reg form items: putting a new empty UserMdl obj for on the index page, so user can shove data into it using the form.
-//		return "register.jsp"; 
-//	}
-//	
-//    @PostMapping("/register")
-//    public String register(
-//    		@Valid @ModelAttribute("newUser") UserMdl newUser
-//    		, BindingResult result
-//    		, Model model
-//    		, HttpSession session
-//    		, RedirectAttributes redirectAttributes
-//    		) {
-//        
-//    	UserMdl user = userSrv.register(newUser, result);
-//        
-//        if(result.hasErrors()) {
-//        	model.addAttribute("validationErrorMsg", "Registration errors.  See details in form below and try again.");
-//            return "register.jsp";
-//        }
-//        
-//        session.setAttribute("userId", user.getId());  // this is a repeat of the last line of the login method
-//        redirectAttributes.addFlashAttribute("successMsg", "Welcome to PlayDateNow.  Take a moment to complete your profile: click on your name on the top right >> then click Profile.  Below: browse playdates and create your own.");
-//	    return "redirect:/playdate"; // redirecting here to playdate for now, b/c insuff time to build out dashboard/home-style page
-//    }
-//    // end legacy register
-	
-//	@RequestMapping("/register")
 	@GetMapping("/register")
     public String registerForm(
     		@Valid @ModelAttribute("user") UserMdl userMdl
     		) {
-        // new begin:
-    	if (isAuthenticated()) {
+    	
+		if (isAuthenticated()) {
             return "redirect:/";
         }
-    	// new end
-    	return "register.jsp";
+    	
+		return "register.jsp";
     }
      
     @PostMapping("/register")
@@ -184,7 +113,6 @@ public class IndexhomeprofileCtl {
      	String password = userMdl.getPassword(); // Store the password before it is encrypted
         
         if (result.hasErrors()) {
-//        	return "loginPage.jsp"; // this line from platform, this doesn't seem right??
         	return "register.jsp";
         }
         
@@ -198,11 +126,11 @@ public class IndexhomeprofileCtl {
         
         // Log in new user with the password we stored before encrypting it.  NOTE: the method listed immed below is built right after this mthd concludes
      	authWithHttpServletRequest(request, userMdl.getEmail(), password);
-//     		return "redirect:/"; // let's get bck to this
-     		return "redirect:/playdate";
+     	
+     	return "redirect:/"; 
      	}
     
-    // We call this new method below to automatically log in newly registered users
+    // login plugin method
  	public void authWithHttpServletRequest(
  			HttpServletRequest request
  			, String email
@@ -213,21 +141,8 @@ public class IndexhomeprofileCtl {
  	    } catch (ServletException e) {
  	    	System.out.println("Error while login: " + e);
  	    }
-    
- 	// end of method
  	}
- 	
-// 	// begin: legacy logout
-//    @GetMapping("/logout")
-//	public String logout(
-//			HttpSession session
-//			) {
-//    	session.setAttribute("userId", null); // nulls the session.userId value, which prevents access to any/all page(s) other than index, thus redirect to index.
-//    	System.out.println("User logged out."); 
-//	    return "redirect:/";
-//	}
-// 	// end: legacy logout
-    
+ 	    
  	// JRF: temporarily disabling below user upgrade program
 // 	// user upgrade program
 //    @RequestMapping("/admin/{id}")
@@ -249,40 +164,18 @@ public class IndexhomeprofileCtl {
 //********************************************************************
 // HOME/PROFILE/ETC METHODS
 //********************************************************************
-		
-    
-//	// begin: legacy home mthd
-// 	@GetMapping("/home")
-//	public String home(
-//			Model model
-//			, HttpSession session
-//			) {
-//	 
-//    	// log out the unauth vs. deliver the auth user data
-//		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
-//		Long userId = (Long) session.getAttribute("userId");
-//		model.addAttribute("authUser", userSrv.findById(userId));
-//		
-//		System.out.println("Page Display: Home"); 
-//	    return "redirect:/playdate"; // redirecting here to playdate for now, b/c insuff time to build out dashboard/home-style page
-//	}
-// 	// end: legacy home mthd
 
     @GetMapping(value = {"/", "/home"})
-    public String home(
+//    public String home(
+    public String displayHome(
     		Principal principal
     		, Model model
     		) {    	
-         
-//        String email = principal.getName();
-//		UserMdl userMdl = userSrv.findByEmail(email);
-//		model.addAttribute("authUser", userMdl);
-    	// above replaced by below
-    	
+
     	// authentication boilerplate for all mthd
 		UserMdl authUserObj = userSrv.findByEmail(principal.getName());
 		model.addAttribute("authUser", authUserObj);
-		model.addAttribute("authUserName", authUserObj.getUserName()); // set the "as-is" username, so it can be statically posted to the top right nav bar
+		model.addAttribute("authUserName", authUserObj.getUserName()); 
 		
 		// JRF temporarily removing below: updating last login and substituting admin.jsp for home is not desired
 //		if(userMdl!=null) {
@@ -297,8 +190,7 @@ public class IndexhomeprofileCtl {
 //			// All other users are redirected to the home page
 //		}
 		
-        return "home.jsp"; // come back and make this work later
-//        return "playdate/list.jsp"; 
+        return "home.jsp"; 
     }
     
     // JRF temporarily disabling this whole admin program
@@ -338,178 +230,53 @@ public class IndexhomeprofileCtl {
     
 	// view all profile 
 	@GetMapping("/profile")
-	public String showAllprofile(
+//	public String showAllprofile(
+	public String displayProfileAll(
 			Model model
-//			, HttpSession session
 			, Principal principal
 			) {
 		
-//		// log out the unauth / deliver the auth use data
-//		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
-//		Long authenticatedUserId = (Long) session.getAttribute("userId");
-//		model.addAttribute("authUser", userSrv.findById(authenticatedUserId));
-		
-		// above replaced by below
     	// authentication boilerplate for all mthd
 		UserMdl authUserObj = userSrv.findByEmail(principal.getName());
 		model.addAttribute("authUser", authUserObj);
-		model.addAttribute("authUserName", authUserObj.getUserName()); // set the "as-is" username, so it can be statically posted to the top right nav bar
+		model.addAttribute("authUserName", authUserObj.getUserName()); 
 		
 		List<UserMdl> profileList = userSrv.returnAll();
 		model.addAttribute("profileList", profileList);
 		return "profile/list.jsp";
 	}
 	
-//	// begin: legacy profile page
-//	// display profile page
-//	@GetMapping("/profile/{id}")
-//	public String showProfile(
-//			@PathVariable("id") Long userProfileId
-//			, Model model
-//			, HttpSession session
-//			) {
-//		
-//    	// log out the unauth vs. deliver the auth user data
-//		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
-//		Long userId = (Long) session.getAttribute("userId");
-//		model.addAttribute("authUser", userSrv.findById(userId));
-//		
-//		// grab the entire user object using the url parameter, then deliver to page
-//		UserMdl userObj = userSrv.findById(userProfileId);
-//		model.addAttribute("userProfile", userObj); 
-//		
-//		// list of playdates where createdBy_id = userProfileId -- CURRENT AND FUTURE
-//		List<PlaydateMdl> userHostedPlaydateListCurrentPlus = playdateSrv.userHostedPlaydateListCurrentPlus(userProfileId);
-//		model.addAttribute("userHostedPlaydateListCurrentPlus", userHostedPlaydateListCurrentPlus);
-//		
-//		// list of playdates where createdBy_id = userProfileId -- PAST
-//		List<PlaydateMdl> userHostedPlaydateListPast = playdateSrv.userHostedPlaydateListPast(userProfileId);
-//		model.addAttribute("userHostedPlaydateListPast", userHostedPlaydateListPast);
-//		
-////			Date todayDate = new Date(); // not sure why this here, I think it was for testing; 9/12 
-//		return "profile/record.jsp";
-//	}
-//	// end: legacy profile page
-	
-	// display profile page
     @GetMapping("/profile/{id}")
-    public String showProfile(
+//    public String showProfile(
+    public String displayProfile(
     		@PathVariable("id") Long userProfileId
     		, Principal principal
     		, Model model
     		) {    	
-    	
-//    	String authUserEmail = principal.getName();
-//		UserMdl authUserObj = userSrv.findByEmail(authUserEmail);
-//		model.addAttribute("authUser", authUserObj);
-//		String authUserEmail = principal.getName();
-    	
+
 		// authentication boilerplate for all mthd
 		UserMdl authUserObj = userSrv.findByEmail(principal.getName());
 		model.addAttribute("authUser", authUserObj);
-		model.addAttribute("authUserName", authUserObj.getUserName()); // set the "as-is" username, so it can be statically posted to the top right nav bar
+		model.addAttribute("authUserName", authUserObj.getUserName()); 
 
-		// grab the entire user object using the url parameter, then deliver to page
-		model.addAttribute("userProfile", userSrv.findById(userProfileId)); 
+		model.addAttribute("userProfile", userSrv.findById(userProfileId)); // grab the entire user object using the url parameter, then deliver to page 
 		
 		return "profile/record.jsp";
     }
-	
-//    // begin: legacy edit profile methods
-//	// display edit page
-//	@GetMapping("/profile/{id}/edit")
-//	public String editProfile(
-////				@ModelAttribute("userProfileTobe") UserupdateMdl userupdateObj
-//			@ModelAttribute("userProfileTobe") UserUpdateDto userupdateObj
-//			, @PathVariable("id") Long userProfileId
-//			, Model model
-//			, HttpSession session
-//			) {
-//		
-//		// log out the unauth / deliver the auth use data
-//		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
-//		Long userId = (Long) session.getAttribute("userId");
-//		model.addAttribute("authUser", userSrv.findById(userId)); 
-//
-//		// (1) acquire as-is object/values from db
-//		UserMdl userObj = userSrv.findById(userProfileId); 
-//		
-//		// (2) Populate the initially-empty userupdateObj (being sent to the form) with the values from the existing record
-//		userupdateObj.setAboutMe(userObj.getAboutMe()); 
-//		userupdateObj.setLastName(userObj.getLastName()); 
-//		userupdateObj.setUserName(userObj.getUserName()); 
-//		userupdateObj.setEmail(userObj.getEmail()); 
-//		userupdateObj.setFirstName(userObj.getFirstName()); 
-//		userupdateObj.setCity(userObj.getCity()); 
-//		userupdateObj.setZipCode(userObj.getZipCode()); 
-//		
-//		// (3) not related to above, but easily confused: 
-//		
-//		model.addAttribute("userProfile", userObj); // send the as-is object to the page, so static values can be used (createdAt, Id, etc.)
-//
-//		return "profile/edit.jsp";
-//	}
-//	
-//	// process the edit
-//	@PostMapping("/profile/edit")
-//	public String PostTheEditProfile(
-//			@Valid 
-////				@ModelAttribute("userProfileTobe") UserupdateMdl userupdateObj
-//			@ModelAttribute("userProfileTobe") UserUpdateDto userupdateObj
-//			, BindingResult result
-//			, Model model
-//			, HttpSession session
-//			, RedirectAttributes redirectAttributes
-//			) {
-//		
-//		// log out the unauth / deliver the auth use data
-//		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
-//		Long authenticatedUserId = (Long) session.getAttribute("userId");
-//		model.addAttribute("authUser", userSrv.findById(authenticatedUserId));
-//		
-//		// (1) acquire as-is object/values from db (as you did in the display mthd)
-//		UserMdl userObj = userSrv.findById(authenticatedUserId); //  gets the userModel object by calling the user service with the session user id
-//		
-//		// (2) overwrite the targeted fields in the userObj with values from the userupdateObj
-//		userObj.setEmail(userupdateObj.getEmail()); 
-//		userObj.setUserName(userupdateObj.getUserName()); 
-//		userObj.setFirstName(userupdateObj.getFirstName() ); 
-//		userObj.setLastName(userupdateObj.getLastName() ); 
-//		
-//		userObj.setAboutMe(userupdateObj.getAboutMe() ); 
-//		userObj.setCity(userupdateObj.getCity() );  
-//		userObj.setZipCode(userupdateObj.getZipCode() ); 
-//		
-//		// (3) run the service to save the updated object
-//		userSrv.updateUserProfile(userObj, result);
-//		
-//		if (result.hasErrors() ) { 
-//			model.addAttribute("userProfile", userObj); // send the as-is object to the page, so static values can be used (createdAt, Id, etc.)
-//			return "profile/edit.jsp";
-//		} else {
-//			return "redirect:/profile/" + userObj.getId(); 
-//		}
-//	}
-//    // end: legacy edit profile methods
     
-	// display edit page
 	@GetMapping("/profile/{id}/edit")
-	public String editProfile(
+//	public String editProfile(
+	public String displayProfileEdit(
 			@ModelAttribute("userProfileTobe") UserUpdateDto userUpdateObj
 			, @PathVariable("id") Long userProfileId
 			, Model model
-//			, HttpSession session
 			, Principal principal
 			) {
 
-//		String authUserEmail = principal.getName();
-//		UserMdl authUserObj = userSrv.findByEmail(authUserEmail);
-//		model.addAttribute("authUser", authUserObj);
-		
 		// authentication boilerplate for all mthd
 		UserMdl authUserObj = userSrv.findByEmail(principal.getName());
 		model.addAttribute("authUser", authUserObj);
-		model.addAttribute("authUserName", authUserObj.getUserName()); // set the "as-is" username, so it can be statically posted to the top right nav bar
+		model.addAttribute("authUserName", authUserObj.getUserName()); 
 
 		// (1) get these values from the db, so they can be delivered as addAtt independent of obj that's in flux
 		String authUserName = authUserObj.getUserName(); 
@@ -518,7 +285,7 @@ public class IndexhomeprofileCtl {
 		// (2) acquire as-is object/values from db
 		UserMdl userProfileObj = userSrv.findById(userProfileId); 
 		
-		// (3) Populate the initially-empty userupdateObj (being sent to the form) with the values from the existing record
+		// (3) Populate the initially-empty userupdateObj (being sent to the page/form) with the values from the existing record
 		userUpdateObj.setUserName(userProfileObj.getUserName()); 
 		userUpdateObj.setEmail(userProfileObj.getEmail()); 
 		userUpdateObj.setFirstName(userProfileObj.getFirstName()); 
@@ -528,6 +295,10 @@ public class IndexhomeprofileCtl {
 		userUpdateObj.setZipCode(userProfileObj.getZipCode()); 
 		
 		// (4) send the as-is object to the page, so static values can be used (createdAt, Id, etc.)
+		
+//		*******
+//		something is goofy with below.  fix this later,  I think for example the userProfileObj line is not used downstream.
+//		*******
 		model.addAttribute("userProfile", userProfileObj); // send the as-is object to the page, so static values can be used (createdAt, Id, etc.)
 		model.addAttribute("userProfileId", userProfileId); 
 		model.addAttribute("authUserName", authUserName); // set the "as-is" username, so it can be statically posted to the top right nav bar
@@ -536,14 +307,13 @@ public class IndexhomeprofileCtl {
 		return "profile/edit.jsp";
 	}
 	
-	// process the edit
 	@PostMapping("/profile/edit")
-	public String PostTheEditProfile(
+//	public String PostTheEditProfile(
+	public String processProfileEdit(
 			@Valid 
 			@ModelAttribute("userProfileTobe") UserUpdateDto userUpdateObj
 			, BindingResult result
 			, Model model
-//			, HttpSession session
 			, Principal principal
 			, RedirectAttributes redirectAttributes
 			) {
@@ -551,10 +321,8 @@ public class IndexhomeprofileCtl {
 		// authentication boilerplate for all mthd
 		UserMdl authUserObj = userSrv.findByEmail(principal.getName());
 		model.addAttribute("authUser", authUserObj);
-		model.addAttribute("authUserName", authUserObj.getUserName()); // set the "as-is" username, so it can be statically posted to the top right nav bar
+		model.addAttribute("authUserName", authUserObj.getUserName()); 
 		
-													//		// (1) acquire as-is object/values from db (as you did in the display mthd)
-													//		UserMdl userObj = userSrv.findById(authenticatedUserId); //  gets the userModel object by calling the user service with the session user id
 		// (1) get these values from the db, so they can be delivered as addAtt independent of obj that's in flux
 		Long userProfileId = authUserObj.getId(); 
 		String authUserName = authUserObj.getUserName(); 
@@ -573,33 +341,15 @@ public class IndexhomeprofileCtl {
 		userSrv.updateUserProfile(authUserObj, result);
 		
 		if (result.hasErrors() ) { 
-//			model.addAttribute("authUser", authUserObj);
-//			model.addAttribute("userProfile", authUserObj); // send the as-is object to the page, so static values can be used (createdAt, Id, etc.)
-			// above replaced by below
-//			model.addAttribute("authUser", authUserObj);
 			model.addAttribute("userProfileId", userProfileId); 
-			model.addAttribute("authUserName", authUserName); // set the "as-is" username, so it can be statically posted to the top right nav bar
+			model.addAttribute("authUserName", authUserName); 
 			model.addAttribute("userProfileCreatedAt", userProfileCreatedAt);
 
-							//			String userName = authUserObj.getUserName(); 
-							//			System.out.println("userName: " + userName); 
 			return "profile/edit.jsp";
 		
 		} else {
-//			System.out.println("email: " + email); 
-//			System.out.println("userMdl: " + userMdl);
-			
-//			https://stackoverflow.com/questions/14010326/how-to-change-the-login-name-for-the-current-user-with-spring-security-3-1
-//			Authentication request = new UsernamePasswordAuthenticationToken(userMdl.getEmail(), password);
-//			Authentication resultX = resultX.authenticate(request);
-//			SecurityContextHolder.getContext().setAuthentication(resultX);
-			
-//			https://stackoverflow.com/questions/7889660/how-to-reload-spring-security-principal-after-updating-in-hibernate
-//			Authentication authentication = new UsernamePasswordAuthenticationToken(userObject, userObject.getPassword(), userObject.getAuthorities());
-//			SecurityContextHolder.getContext().setAuthentication(authentication);
 
-			return "redirect:/profile/" + authUserObj.getId(); 
-//			return "redirect:/"; 
+			return "redirect:/profile/" + authUserObj.getId();  
 		}
 	}
 	

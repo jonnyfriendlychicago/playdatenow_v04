@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8" import="java.util.Date"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="java.util.Date"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
@@ -64,9 +63,7 @@
 						placeholder="eventName" />
 					<form:label path="eventName" for="eventName">Playdate Name</form:label>
 					<div id="eventNameHelp" class="form-text">If left blank, your event will be listed as "Playdate." Suggestion: enter a descriptive name (e.g., arts & crafts, bike ride, scooters, legos, etc.).</div>
-					<p class="text-danger"><form:errors path="eventName" />
-					<%-- <p class="text-danger"><form:errors path="eventName" /> --%>
-					</p>
+					<p class="text-danger"><form:errors path="eventName" /></p>
 				</div>
 
 				<div class="form-floating mb-3">
@@ -78,7 +75,6 @@
 						placeholder="locationName" />
 					<form:label path="locationName" for="locationName">Location Name</form:label>
 					<div id="locationHelp" class="form-text">Examples: Our Home or Central Park or Gertie's Ice Cream, etc.</div>
-					<!-- <p class="text-danger"> -->
 					<p class="text-danger"><form:errors path="locationName" /></p>
 				</div>
 

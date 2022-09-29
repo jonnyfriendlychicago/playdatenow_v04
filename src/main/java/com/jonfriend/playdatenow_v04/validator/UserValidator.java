@@ -33,18 +33,16 @@ public class UserValidator implements Validator {
             errors.rejectValue("passwordConfirm", "Match");
         }     
         
-        System.out.println("userMdl.getEmail(): " + userMdl.getEmail()); 
-        
         Optional<UserMdl> userObjWithSameEmail = Optional.ofNullable(userRpo.findByEmail(userMdl.getEmail()));
         
         Optional<UserMdl> userObjWithSameUserName = Optional.ofNullable(userRpo.findByUserName(userMdl.getUserName()));
         
-     // Reject if email exists in db
+        // Reject if email exists in db
     	if(userObjWithSameEmail.isPresent()) {
     		errors.rejectValue("email", "Match");
     	}
     	
-        // Reject if email exists in db
+        // Reject if username exists in db
        	if(userObjWithSameUserName.isPresent()) {
        		errors.rejectValue("userName", "Match");
        	}

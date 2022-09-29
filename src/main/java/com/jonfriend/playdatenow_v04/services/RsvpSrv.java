@@ -3,6 +3,7 @@ package com.jonfriend.playdatenow_v04.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jonfriend.playdatenow_v04.models.RsvpMdl;
@@ -14,9 +15,11 @@ import com.jonfriend.playdatenow_v04.repositories.RsvpRpo;
 public class RsvpSrv {
 	
 	// adding the rsvp repository as a dependency
-	private final RsvpRpo rsvpRpo;
-	
-	public RsvpSrv(RsvpRpo rsvpRpo) {this.rsvpRpo = rsvpRpo;}
+//	private final RsvpRpo rsvpRpo;
+//	public RsvpSrv(RsvpRpo rsvpRpo) {this.rsvpRpo = rsvpRpo;}
+	// above replaced by below
+	@Autowired
+	RsvpRpo rsvpRpo;
 	
 	// creates one rsvp 
 	public RsvpMdl create(RsvpMdl x) {

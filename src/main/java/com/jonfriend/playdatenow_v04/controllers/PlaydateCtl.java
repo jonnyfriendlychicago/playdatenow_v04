@@ -1,19 +1,15 @@
 package com.jonfriend.playdatenow_v04.controllers;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,75 +36,52 @@ public class PlaydateCtl {
 	@Autowired
 	private RsvpSrv rsvpSrv; 
 	
-	// view all record
 	@GetMapping("/playdate")
-	public String showAllPlaydate(
-			@ModelAttribute("playdate") PlaydateMdl playdateMdl // this needed to display create-new on the page
-			, Principal principal // added for spring
+	public String displayPlaydateAll(
+			Principal principal 
 			, Model model
-//			, HttpSession session // whacked for spring
 			) {
 		
-//		// log out the unauth / deliver the auth use data
-//		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
-//		Long authenticatedUserId = (Long) session.getAttribute("userId");
-//		model.addAttribute("authUser", userSrv.findById(authenticatedUserId));
-		// above replaced by below
     	// authentication boilerplate for all mthd
 		UserMdl authUserObj = userSrv.findByEmail(principal.getName());
 		model.addAttribute("authUser", authUserObj);
-		model.addAttribute("authUserName", authUserObj.getUserName()); // set the "as-is" username, so it can be statically posted to the top right nav bar
+		model.addAttribute("authUserName", authUserObj.getUserName()); 
 		
-		// orig return all list
 		List<PlaydateMdl> playdateList = playdateSrv.returnAll();
 		model.addAttribute("playdateList", playdateList);
 		return "playdate/list.jsp";
 	}
 	
-	// display create-new page
 	@GetMapping("/playdate/new")
-	public String newPlaydate(
-			@ModelAttribute("playdate") PlaydateMdl playdateMdl
+	public String displayPlaydateNew(
+			@ModelAttribute("playdate") PlaydateMdl playdateObj
 			, Model model
-//			, HttpSession session
 			, Principal principal
 			) {
-		 
-//		// log out the unauth / deliver the auth use data
-//		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
-//		Long authenticatedUserId = (Long) session.getAttribute("userId");
-//		model.addAttribute("authUser", userSrv.findById(authenticatedUserId)); 
-		// above replaced by below
+
     	// authentication boilerplate for all mthd
 		UserMdl authUserObj = userSrv.findByEmail(principal.getName());
 		model.addAttribute("authUser", authUserObj);
-		model.addAttribute("authUserName", authUserObj.getUserName()); // set the "as-is" username, so it can be statically posted to the top right nav bar
+		model.addAttribute("authUserName", authUserObj.getUserName()); 
 		
 		String[] startTimeList = { "8:00am",	"8:30am",	"9:00am",	"9:30am",	"10:00am",	"10:30am",	"11:00am",	"11:30am",	"12:00pm",	"12:30pm",	"1:00pm",	"1:30pm",	"2:00pm",	"2:30pm",	"3:00pm",	"3:30pm",	"4:00pm",	"4:30pm",	"5:00pm",	"5:30pm",	"6:00pm",	"6:30pm",	"7:00pm",	"7:30pm",	"8:00pm",	"8:30pm"};
 		model.addAttribute("startTimeList", startTimeList ); 
 		return "playdate/create.jsp";
 	}
 	 
-	// process the create-new  
 	@PostMapping("/playdate/new")
-	public String addNewPlaydate(
-			@Valid @ModelAttribute("playdate") PlaydateMdl playdateMdl
+	public String processPlaydateNew(
+			@Valid @ModelAttribute("playdate") PlaydateMdl playdateObj
 			, BindingResult result
 			, Model model
-//			, HttpSession session
 			, Principal principal
 			, RedirectAttributes redirectAttributes
 			) {
-		
-		// log out the unauth / deliver the auth use data
-//		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
-//		Long authenticatedUserId = (Long) session.getAttribute("userId");
-//		model.addAttribute("authUser", userSrv.findById(authenticatedUserId));
-		// above replaced by below
+
     	// authentication boilerplate for all mthd
 		UserMdl authUserObj = userSrv.findByEmail(principal.getName());
 		model.addAttribute("authUser", authUserObj);
-		model.addAttribute("authUserName", authUserObj.getUserName()); // set the "as-is" username, so it can be statically posted to the top right nav bar
+		model.addAttribute("authUserName", authUserObj.getUserName()); 
 		
 		if(result.hasErrors()) {
 			model.addAttribute("validationErrorMsg", "Uh-oh! Please fix the errors noted below and submit again.  (Or cancel.)"); 
@@ -118,48 +91,36 @@ public class PlaydateCtl {
 		
 		} else {
 
-//			UserMdl currentUserMdl = userSrv.findById(authenticatedUserId); // gets the userModel object by calling the user service with the session user id
-//			playdateMdl.setUserMdl( currentUserMdl); //  sets the userId of the new record with above acquisition.
-			// above two lines replaced with below!
-			playdateMdl.setUserMdl( authUserObj); 
-			playdateSrv.create(playdateMdl);
-			Long newlyCreatedPlaydateID = playdateMdl.getId();  
+			playdateObj.setUserMdl( authUserObj); 
+			playdateSrv.create(playdateObj);
+			Long newlyCreatedPlaydateID = playdateObj.getId();  
 			redirectAttributes.addFlashAttribute("successMsg", "This playdate is gonna be awesome!  Make sure you invite some friends to RSVP.");
 			return "redirect:/playdate/" + newlyCreatedPlaydateID;
 		}
 	}
 	
-	// view record
 	@GetMapping("/playdate/{id}")
-	public String showPlaydate(
+	public String displayPlaydate(
 			@PathVariable("id") Long playdateId
-			, @ModelAttribute("rsvp") RsvpMdl rsvpMdl // enables deliver of a RSVP record on the page
+			, @ModelAttribute("rsvp") RsvpMdl rsvpObj // enables delivery of a RSVP record on the page
 			, Model model
-//			, HttpSession session
 			, Principal principal
 			) {
-		
-		// log out the unauth / deliver the auth user data
-//		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
-//		Long authenticatedUserId = (Long) session.getAttribute("userId");
-//		model.addAttribute("authUser", userSrv.findById(authenticatedUserId));
-		// above replaced by below
+
     	// authentication boilerplate for all mthd
 		UserMdl authUserObj = userSrv.findByEmail(principal.getName());
 		model.addAttribute("authUser", authUserObj);
-		model.addAttribute("authUserName", authUserObj.getUserName()); // set the "as-is" username, so it can be statically posted to the top right nav bar
+		model.addAttribute("authUserName", authUserObj.getUserName()); 
 		
-//		UserMdl currentUserMdl = userSrv.findById(authenticatedUserId); // used for show/orNot edit playdate button
-		// above line no longer needed
 		PlaydateMdl playdateObj = playdateSrv.findById(playdateId); // display native playdate fields, etc.
 		
 		// begin: calculate various RSVP-related stats.  NOTE: this all could be done with native queries as well, but this is good function/loop practice.  
 		List<RsvpMdl> rsvpList = rsvpSrv.returnAllRsvpForPlaydate(playdateObj); // list of rsvps, which we will use downstream
-		Integer rsvpCount = 0; 							// instantiate the java variable that we will update in the loop
-		Integer aggKidsCount = 0; 						// instantiate the java variable that we will update in the loop 
-		Integer aggAdultsCount = 0; 					// instantiate the java variable that we will update in the loop
-		Boolean rsvpExistsCreatedByAuthUser = false; 	// instantiate the java variable that we will update in the loop
-		Integer openKidsSpots = 0; 						// instantiate the java variable that we will update in the loop
+		Integer rsvpCount = 0; 							// here and below: instantiate the java variable that we will update in the loop
+		Integer aggKidsCount = 0; 						 
+		Integer aggAdultsCount = 0; 					
+		Boolean rsvpExistsCreatedByAuthUser = false; 	
+		Integer openKidsSpots = 0; 						
 		
 		for (int i=0; i < rsvpList.size(); i++  ) { 	// for each record in the list of RSVPs... 
 			if ( rsvpList.get(i).getRsvpStatus().equals("In")) { // we only count the 'in' records towards totals
@@ -167,8 +128,7 @@ public class PlaydateCtl {
 				aggKidsCount += rsvpList.get(i).getKidCount();
 				aggAdultsCount += rsvpList.get(i).getAdultCount(); 
 			} 
-//			if (rsvpList.get(i).getUserMdl().equals(currentUserMdl) )  // this 'if' sets needed flags if it exists for the logged in user, and delivers the RSVP object to the page as well
-			// above replaced by below	
+
 			if (rsvpList.get(i).getUserMdl().equals(authUserObj) )  // this 'if' sets needed flags if it exists for the logged in user, and delivers the RSVP object to the page as well
 			{
 				rsvpExistsCreatedByAuthUser = true;  
@@ -196,34 +156,25 @@ public class PlaydateCtl {
 		
 		// begin: get/deliver list of unioned rsvp records
 		List<PlaydateUserUnionRsvpUser> playdateRsvpList = rsvpSrv.playdateRsvpList(playdateId);
-		model.addAttribute("playdateRsvpList", playdateRsvpList); // end: get/deliver list of unioned rsvp records  
+		model.addAttribute("playdateRsvpList", playdateRsvpList);   
 
 		return "playdate/record.jsp";
 	}
 
-	// display edit page
 	@GetMapping("/playdate/{id}/edit")
 	public String editPlaydate(
 			@PathVariable("id") Long playdateId
-			, @ModelAttribute("rsvp") RsvpMdl rsvpMdl // added, trying to put RSVP form on page
+			, @ModelAttribute("rsvp") RsvpMdl rsvpMdl
 			, Model model
-//			, HttpSession session
 			, Principal principal
 			) {
 		
-		System.out.println("on edit display mthd"); 
-//		// log out the unauth / deliver the auth user data
-//		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
-//		Long authenticatedUserId = (Long) session.getAttribute("userId");
-//		model.addAttribute("authUser", userSrv.findById(authenticatedUserId));
-//		UserMdl currentUserMdl = userSrv.findById(authenticatedUserId); // used for show/orNot edit playdate button; gets the userModel object by calling the user service with the session user id value
-		// above replaced by below
     	// authentication boilerplate for all mthd
 		UserMdl authUserObj = userSrv.findByEmail(principal.getName());
 		model.addAttribute("authUser", authUserObj);
-		model.addAttribute("authUserName", authUserObj.getUserName()); // set the "as-is" username, so it can be statically posted to the top right nav bar
+		model.addAttribute("authUserName", authUserObj.getUserName()); 
 		
-		PlaydateMdl playdateObj = playdateSrv.findById(playdateId); // display native playdate fields, etc.
+		PlaydateMdl playdateObj = playdateSrv.findById(playdateId); 
 		model.addAttribute("playdate", playdateObj);
 		
 		// get/deliver from playdate db record, Part 1 (so they can be addAtts that are independent from the playdate obj)
@@ -233,11 +184,10 @@ public class PlaydateCtl {
 		
 		// begin: calculate various RSVP-related stats.  NOTE: this all could be done with native queries as well, but this is good function/loop practice.  
 		List<RsvpMdl> rsvpList = rsvpSrv.returnAllRsvpForPlaydate(playdateObj); // list of rsvps, which we will use downstream
-		Integer rsvpCount = 0; 							// instantiate the java variable that we will update in the loop
-		Integer aggKidsCount = 0; 						// instantiate the java variable that we will update in the loop 
-		Integer aggAdultsCount = 0; 					// instantiate the java variable that we will update in the loop
-		Boolean rsvpExistsCreatedByAuthUser = false; 	// instantiate the java variable that we will update in the loop
-		Integer openKidsSpots = 0; 						// instantiate the java variable that we will update in the loop
+		Integer rsvpCount = 0; 							// here and below: instantiate the java variable that we will update in the loop
+		Integer aggKidsCount = 0; 						 
+		Integer aggAdultsCount = 0; 					
+		Integer openKidsSpots = 0; 						
 		
 		for (int i=0; i < rsvpList.size(); i++  ) { 	// for each record in the list of RSVPs... 
 			if ( rsvpList.get(i).getRsvpStatus().equals("In")) { // we only count the 'in' records towards totals
@@ -245,14 +195,6 @@ public class PlaydateCtl {
 				aggKidsCount += rsvpList.get(i).getKidCount();
 				aggAdultsCount += rsvpList.get(i).getAdultCount(); 
 			} 
-//			if (rsvpList.get(i).getUserMdl().equals(currentUserMdl) )  // this 'if' sets needed flags if it exists for the logged in user, and delivers the RSVP object to the page as well
-			// above replaced by below
-			if (rsvpList.get(i).getUserMdl().equals(authUserObj) )  // this 'if' sets needed flags if it exists for the logged in user, and delivers the RSVP object to the page as well
-			{
-				rsvpExistsCreatedByAuthUser = true;  
-				RsvpMdl rsvpObjForAuthUser = rsvpSrv.findById(rsvpList.get(i).getId()); 
-				model.addAttribute("rsvpObjForAuthUser", rsvpObjForAuthUser); 
-			}   
 		}
 		
 		if (playdateObj.getRsvpStatus().equals("In")) { // this 'if' accounts for the host family
@@ -265,7 +207,6 @@ public class PlaydateCtl {
 
 		model.addAttribute("rsvpCount", rsvpCount); 
 		model.addAttribute("aggKidsCount", aggKidsCount); 
-		model.addAttribute("rsvpExistsCreatedByAuthUser", rsvpExistsCreatedByAuthUser); // this is not relevant for edit screen, b/c authuser is host, and has no RSVP ever, but leave it
 		model.addAttribute("rsvpList", rsvpList);
 		model.addAttribute("aggAdultsCount", aggAdultsCount); 
 		model.addAttribute("openKidsSpots", openKidsSpots); 
@@ -292,43 +233,30 @@ public class PlaydateCtl {
 		return "playdate/edit.jsp";
 	}
 	
-	// process the edit(s)
 	@PostMapping("/playdate/edit")
 	public String PostTheEditPlaydate(
 			@Valid 
 			@ModelAttribute("playdate") PlaydateMdl playdateMdl 
 			, BindingResult result
 			, Model model
-//			, HttpSession session
 			, Principal principal
 			, RedirectAttributes redirectAttributes
 			) {
 		
-		System.out.println("on edit process mthd"); 
-		
-//		// log out the unauth / deliver the auth use data
-//		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
-//		Long authenticatedUserId = (Long) session.getAttribute("userId");
-//		model.addAttribute("authUser", userSrv.findById(authenticatedUserId));
-		// above replaced by below
     	// authentication boilerplate for all mthd
 		UserMdl authUserObj = userSrv.findByEmail(principal.getName());
 		model.addAttribute("authUser", authUserObj);
-		model.addAttribute("authUserName", authUserObj.getUserName()); // set the "as-is" username, so it can be statically posted to the top right nav bar
+		model.addAttribute("authUserName", authUserObj.getUserName()); 
 		
-		PlaydateMdl playdateObj = playdateSrv.findById(playdateMdl.getId()); // sets up playdate object by using the getID on the modAtt thing.
+		PlaydateMdl playdateObj = playdateSrv.findById(playdateMdl.getId()); 
 		
 		// get/deliver from playdate db record, Part 1 (so they can be addAtts that are independent from the playdate obj)
 		Date playdateCreatedAt = playdateObj.getCreatedAt(); 
 		Long playdateCreatedById = playdateObj.getUserMdl().getId(); 
 		String playdateCreatedByUserName = playdateObj.getUserMdl().getUserName();
 		
-		// validate if user = creator
-//		UserMdl currentUserMdl = userSrv.findById(authenticatedUserId); //  gets the userModel object by calling the user service with the session user id
-		// above line no longer needed
-		UserMdl recordCreatorUserMdl = playdateObj.getUserMdl();   // gets the userMdl obj saved to the existing playdateObj 
-//		if(!currentUserMdl.equals(recordCreatorUserMdl)) {
-		// above replaced by below
+		UserMdl recordCreatorUserMdl = playdateObj.getUserMdl();    
+
 		if(!authUserObj.equals(recordCreatorUserMdl)) {
 			System.out.println("recordCreatorUserMdl != currentUserMdl, so redirected to record"); 
 			redirectAttributes.addFlashAttribute("permissionErrorMsg", "This record can only be edited by its creator.  Any edits just attempted were discarded.");
@@ -337,16 +265,15 @@ public class PlaydateCtl {
 		
 		if (result.hasErrors()) { 			
 			// note: do not re-deliver playdateObj: doing so will overrride all the values the users submitted / system rejected
-			model.addAttribute("validationErrorMsg", "Uh-oh! Please fix the errors noted below and submit again.  (Or cancel.)"); //redirectAttributes doesn't work here b/c we are not redirecting, we are merely returning.  so use modAtt instead.
-			Long playdateId = playdateMdl.getId(); // need this here, so that the playdateId can be referenced downstream
+			model.addAttribute("validationErrorMsg", "Uh-oh! Please fix the errors noted below and submit again.  (Or cancel.)"); 
+			Long playdateId = playdateMdl.getId(); 
 			
 			// begin: calculate various RSVP-related stats.  NOTE: this all could be done with native queries as well, but this is good function/loop practice.  
 			List<RsvpMdl> rsvpList = rsvpSrv.returnAllRsvpForPlaydate(playdateObj); // list of rsvps, which we will use downstream
-			Integer rsvpCount = 0; 							// instantiate the java variable that we will update in the loop
-			Integer aggKidsCount = 0; 						// instantiate the java variable that we will update in the loop 
-			Integer aggAdultsCount = 0; 					// instantiate the java variable that we will update in the loop
-			Boolean rsvpExistsCreatedByAuthUser = false; 	// instantiate the java variable that we will update in the loop
-			Integer openKidsSpots = 0; 						// instantiate the java variable that we will update in the loop
+			Integer rsvpCount = 0; 							// here and below: instantiate the java variable that we will update in the loop
+			Integer aggKidsCount = 0; 						 
+			Integer aggAdultsCount = 0; 					
+			Integer openKidsSpots = 0; 						
 			
 			for (int i=0; i < rsvpList.size(); i++  ) { 	// for each record in the list of RSVPs... 
 				if ( rsvpList.get(i).getRsvpStatus().equals("In")) { // we only count the 'in' records towards totals
@@ -354,14 +281,6 @@ public class PlaydateCtl {
 					aggKidsCount += rsvpList.get(i).getKidCount();
 					aggAdultsCount += rsvpList.get(i).getAdultCount(); 
 				} 
-//				if (rsvpList.get(i).getUserMdl().equals(currentUserMdl) )  // this 'if' sets needed flags if it exists for the logged in user, and delivers the RSVP object to the page as well
-				// above replaced by below
-				if (rsvpList.get(i).getUserMdl().equals(authUserObj) )  // this 'if' sets needed flags if it exists for the logged in user, and delivers the RSVP object to the page as well
-				{
-					rsvpExistsCreatedByAuthUser = true;  
-					RsvpMdl rsvpObjForAuthUser = rsvpSrv.findById(rsvpList.get(i).getId()); 
-					model.addAttribute("rsvpObjForAuthUser", rsvpObjForAuthUser); 
-				}   
 			}
 			
 			if (playdateObj.getRsvpStatus().equals("In")) { // this 'if' accounts for the host family
@@ -374,7 +293,6 @@ public class PlaydateCtl {
 
 			model.addAttribute("rsvpCount", rsvpCount); 
 			model.addAttribute("aggKidsCount", aggKidsCount); 
-			model.addAttribute("rsvpExistsCreatedByAuthUser", rsvpExistsCreatedByAuthUser); // this is not relevant for edit screen, b/c authuser is host, and has no RSVP ever, but leave it
 			model.addAttribute("rsvpList", rsvpList);
 			model.addAttribute("aggAdultsCount", aggAdultsCount); 
 			model.addAttribute("openKidsSpots", openKidsSpots); 
@@ -407,32 +325,18 @@ public class PlaydateCtl {
 		}
 	}
 	
-	// delete playdate
-//    @DeleteMapping("/playdate/{id}") 
-	// sept27: above replaced by below
     @RequestMapping("/playdate/delete/{id}") 
     public String deletePlaydate(
     		@PathVariable("id") Long playdateId
-//    		, HttpSession session
 			, Principal principal
     		, RedirectAttributes redirectAttributes
     		) {
 
-    	//		// If no userId is found in session, redirect to logout.  JRF: put this on basically all methods now, except the login/reg pages
-//		if(session.getAttribute("userId") == null) {return "redirect:/logout";}
-//		Long authenticatedUserId = (Long) session.getAttribute("userId");
-//		// model.addAttribute("authUser", userSrv.findById(AuthenticatedUserId));
-    	
-		// above replaced by below
     	// authentication boilerplate for all mthd
 		UserMdl authUserObj = userSrv.findByEmail(principal.getName());
-//		model.addAttribute("authUser", authUserObj);
-//		model.addAttribute("authUserName", authUserObj.getUserName()); // set the "as-is" username, so it can be statically posted to the top right nav bar
+		// no model attributes here b/c no resulting page we are rending
 		
 		PlaydateMdl playdateObj = playdateSrv.findById(playdateId);
-		
-//		UserMdl currentUserMdl = userSrv.findById(authenticatedUserId); //  gets the userModel object by calling the user service with the session user id
-		// above line no longer needed
 		UserMdl recordCreatorUserMdl = playdateObj.getUserMdl();   // gets the userMdl obj saved to the existing playdateObj		
 		
 		if(!authUserObj.equals(recordCreatorUserMdl)) {

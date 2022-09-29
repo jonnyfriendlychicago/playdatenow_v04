@@ -9,32 +9,41 @@
 
 <c:if test="${validationErrorMsg != null}">
 	<div class="alert alert-danger" role="alert">
-		${validationErrorMsg}</div>
+		${validationErrorMsg}
+	</div>
 </c:if>
 <div id="loginCard" class="card p-3 d-md-flex justify-content-center align-items-center">
 	<c:if test="${logoutMessage != null}">
-        <c:out value="${logoutMessage}"></c:out>
+        ${logoutMessage}
     </c:if>
-    
-       <c:if test="${errorMessage != null}">
-        <c:out value="${errorMessage}"></c:out>
+    <c:if test="${errorMessage != null}">
+        ${errorMessage}
     </c:if>
     
     <p class="h3 mb-3 fw-normal">Please Login</p>
 
-	<%-- <form:form action='/login' method='post' modelAttribute='newLogin'> --%>
 	<form:form action='/login' method='post' modelAttribute='user'>
 
 		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 		
 		<div class="form-floating w-80">
-			<form:input path="email" type="email" class="form-control" id="email" placeholder="name@example.com" />
+			<form:input 
+				path="email" 
+				type="email" 
+				class="form-control" 
+				id="email" 
+				placeholder="name@example.com" />
 			<form:label path="email" for="email">Email</form:label>
 			<p class="text-danger"><form:errors path="email" />
 		</div>
 
 		<div class="form-floating mb-3">
-			<form:input path="password" type="password" class="form-control" id="password" placeholder="Password" />
+			<form:input 
+				path="password" 
+				type="password" 
+				class="form-control" 
+				id="password" 
+				placeholder="Password" />
 			<form:label path="password" for="password">Password</form:label>
 			<p class="text-danger"><form:errors path="password" />
 		</div>
