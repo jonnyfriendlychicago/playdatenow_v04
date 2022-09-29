@@ -5,6 +5,8 @@ import java.util.List;
 import com.jonfriend.playdatenow_v04.models.RoleMdl;
 import com.jonfriend.playdatenow_v04.models.UserMdl;
 import com.jonfriend.playdatenow_v04.repositories.UserRpo;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,17 +18,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserDetailsServiceImplementation implements UserDetailsService {
 
-//	make below an autowire, after everything working
-	private UserRpo userRpo;
-    public UserDetailsServiceImplementation(UserRpo userRpo){
-        this.userRpo = userRpo;
-    } 
+//	private UserRpo userRpo;
+//    public UserDetailsServiceImplementation(UserRpo userRpo){this.userRpo = userRpo;} 
+	// above replaced by below: make below an autowire, after everything working
+    @Autowired
+    UserRpo userRpo; 
     
     @Override // loadUserByUsername is a misleading name here because we are using email for login credentials
 
-    //    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    //    UserMdl userMdl = userRpo.findByUsername(username);
-        // above replaced by below
         public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
             UserMdl userMdl = userRpo.findByEmail(email);
         

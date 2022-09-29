@@ -2,6 +2,8 @@ package com.jonfriend.playdatenow_v04.services;
 
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.jonfriend.playdatenow_v04.models.PlaydateMdl;
 import com.jonfriend.playdatenow_v04.repositories.PlaydateRpo;
@@ -10,9 +12,11 @@ import com.jonfriend.playdatenow_v04.repositories.PlaydateRpo;
 public class PlaydateSrv {
 	
 	// adding the playdate repository as a dependency
-	private final PlaydateRpo playdateRpo;
-	
-	public PlaydateSrv(PlaydateRpo playdateRpo) {this.playdateRpo = playdateRpo;}
+//	private final PlaydateRpo playdateRpo;
+//	public PlaydateSrv(PlaydateRpo playdateRpo) {this.playdateRpo = playdateRpo;}
+	// above replaced by below
+	@Autowired
+	PlaydateRpo playdateRpo;
 	
 	// creates one playdate 
 	public PlaydateMdl create(PlaydateMdl x) {

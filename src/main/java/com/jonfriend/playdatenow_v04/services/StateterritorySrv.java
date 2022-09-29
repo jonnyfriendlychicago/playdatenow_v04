@@ -2,6 +2,7 @@ package com.jonfriend.playdatenow_v04.services;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.jonfriend.playdatenow_v04.models.StateterritoryMdl;
 import com.jonfriend.playdatenow_v04.repositories.StateterritoryRpo;
@@ -10,9 +11,11 @@ import com.jonfriend.playdatenow_v04.repositories.StateterritoryRpo;
 public class StateterritorySrv {
 	
 	// adding the playdate repository as a dependency
-	private final StateterritoryRpo stateterritoryRpo;
-	
-	public StateterritorySrv(StateterritoryRpo stateterritoryRpo) {this.stateterritoryRpo = stateterritoryRpo;}
+//	private final StateterritoryRpo stateterritoryRpo;
+//	public StateterritorySrv(StateterritoryRpo stateterritoryRpo) {this.stateterritoryRpo = stateterritoryRpo;}
+	// above replaced by below
+	@Autowired
+	StateterritoryRpo stateterritoryRpo; 
 
 	// returns all stateterritory 
 	public List<StateterritoryMdl> returnAll(){

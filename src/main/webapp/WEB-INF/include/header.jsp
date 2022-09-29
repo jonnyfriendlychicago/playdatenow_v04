@@ -5,15 +5,9 @@
   
 <nav class="navbar navbar-expand-sm navbar-dark bg-dark" aria-label="Third navbar example">
     <div class="container-fluid">
-      <!-- <a class="navbar-brand" href="#">PlayDateNOW</a> -->
-      
       <a class="navbar-brand" href="/playdate">
-      	<!-- <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle"> -->
-      	<!-- <img src="/img/pdnWhiteLogoNoBg.png" alt="mdo" width="32" height="32" class="rounded-circle"> -->
       	<img src="/img/pdnWhiteLogoNoBg.png" alt="playDateNOW logo all pages" height="32" >
       </a>
-      
-      
       
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample03" aria-controls="navbarsExample03" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -75,13 +69,11 @@
 		</div> -->
 		
 		   <div class="nav-item dropdown ml-0">
-            <%-- <a class="nav-link dropdown-toggle text-light" href="#" data-bs-toggle="dropdown" aria-expanded="false">${authUser.userName}</a> --%>
             <a class="nav-link dropdown-toggle text-light" href="#" data-bs-toggle="dropdown" aria-expanded="false">${authUserName}</a>
             <ul class="dropdown-menu dropdown-menu-lg-end">
               	<li><a class="dropdown-item" href="/profile/${authUser.id}">Profile</a></li>
 				<li><hr class="dropdown-divider"></li>
               	<li>
-              	<!-- 	<a class="dropdown-item" href="/logout">Log out</a> -->
 		          	<form id="logoutForm" method="POST" action="/logout">
 						<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 						<button type="submit" class="btn btn-light">Signout</button>
