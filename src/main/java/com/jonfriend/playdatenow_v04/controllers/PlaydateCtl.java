@@ -164,7 +164,7 @@ public class PlaydateCtl {
 	@GetMapping("/playdate/{id}/edit")
 	public String editPlaydate(
 			@PathVariable("id") Long playdateId
-			, @ModelAttribute("rsvp") RsvpMdl rsvpMdl
+//			, @ModelAttribute("rsvp") RsvpMdl rsvpMdl
 			, Model model
 			, Principal principal
 			) {
